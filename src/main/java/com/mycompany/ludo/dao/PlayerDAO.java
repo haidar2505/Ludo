@@ -15,10 +15,10 @@ import java.sql.SQLException;
  */
 public class PlayerDAO {
 
-    private Connection connect;
+    private Connection c;
 
-    public PlayerDAO(Connection connect) {
-        this.connect = connect;
+    public PlayerDAO(Connection c) {
+        this.c = c;
     }
 
     public int createPlayer(String playerName, Color color) throws SQLException {
@@ -26,7 +26,7 @@ public class PlayerDAO {
         String sql = "INSERT INTO public.player(name, color) VALUES (?, ?);";
 
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, playerName);
             stmt.setString(2, color.name());
             stmt.executeUpdate();

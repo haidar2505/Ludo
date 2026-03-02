@@ -14,16 +14,16 @@ import java.sql.SQLException;
  */
 public class PawnDAO {
 
-    private Connection connect;
+    private Connection c;
 
-    public PawnDAO(Connection connect) {
-        this.connect = connect;
+    public PawnDAO(Connection c) {
+        this.c = c;
     }
 
     public int createPawn(int playerId) throws SQLException {
         String sql = "INSERT INTO public.pawn(playerid, position) VALUES (?, ?);";
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
             stmt.setInt(2, 0);
             stmt.executeUpdate();
@@ -37,7 +37,7 @@ public class PawnDAO {
     public int movePawn(int pawnId, int position, boolean isFinished) throws SQLException {
         String sql = "UPDATE public.game SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, position);
             stmt.setBoolean(2, false);
             stmt.setBoolean(3, isFinished);
@@ -52,7 +52,7 @@ public class PawnDAO {
     public int returnHomePawn(int position){
         String sql = "UPDATE public.game SET position=?, ishome = ? WHERE pawnid = ?;";
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, position);
             stmt.setBoolean(2, true);
             stmt.executeUpdate();

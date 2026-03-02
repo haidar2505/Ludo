@@ -18,16 +18,16 @@ import java.time.LocalDateTime;
  */
 public class GameDAO {
 
-    private Connection connect;
+    private Connection c;
 
-    public GameDAO(Connection connect) {
-        this.connect = connect;
+    public GameDAO(Connection c) {
+        this.c = c;
     }
 
     public int createGame() throws SQLException {
         String sql = "INSERT INTO public.game(starttime, endtime, winnerid) VALUES (?, ?, ?); ";
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setNull(2, Types.TIMESTAMP);
             stmt.setNull(3, Types.INTEGER);
@@ -43,7 +43,7 @@ public class GameDAO {
     public int endGame(int gameId,int winnerId) throws SQLException {
         String sql = "UPDATE public.game SET endtime=?, winnerid=? WHERE gameid = ?;";
         try {
-            PreparedStatement stmt = connect.prepareStatement(sql);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setInt(2, winnerId);
             stmt.setInt(3, gameId);
