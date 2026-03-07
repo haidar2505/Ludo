@@ -4,6 +4,7 @@
  */
 package com.mycompany.ludo.DAO;
 
+import com.mycompany.ludo.model.Pawn;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,15 +34,20 @@ public class PawnDAO {
 
         return 0;
     }
+    
+//    public int selectPawn(int id){
+//        
+//    }
 
-    public int movePawn(int pawnId, int position, boolean isFinished) throws SQLException {
+    public int movePawn(Pawn pawn) throws SQLException {
         String sql = "UPDATE public.game SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setInt(1, position);
+            stmt.setInt(1, pawn.getPosition());
             stmt.setBoolean(2, false);
-            stmt.setBoolean(3, isFinished);
-            stmt.setInt(3, pawnId);
+            pawn.setIsHome(false);
+            stmt.setBoolean(3, pawn.isIsFinished());
+            stmt.setInt(3, pawn.getPawnId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,12 +55,14 @@ public class PawnDAO {
         return 0;
     }
     
-    public int returnHomePawn(int position){
+    public int returnHomePawn(Pawn pawn){
         String sql = "UPDATE public.game SET position=?, ishome = ? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setInt(1, position);
+            stmt.setInt(1, pawn.getPosition());
             stmt.setBoolean(2, true);
+            pawn.setIsHome(true);
+            stmt.setInt(3, pawn.getPlayerId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -13,15 +13,11 @@ import java.time.LocalDateTime;
 public class Game {
 
     private int gameId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String startTime;
+    private String endTime;
     private int winnerId;
 
-    public Game(int gameId, LocalDateTime startTime, LocalDateTime endTime, int winnerId) {
-        this.gameId = gameId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.winnerId = winnerId;
+    public Game() {
     }
 
     public int getGameId() {
@@ -32,19 +28,19 @@ public class Game {
         this.gameId = gameId;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 

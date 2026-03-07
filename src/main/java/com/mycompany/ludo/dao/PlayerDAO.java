@@ -22,9 +22,7 @@ public class PlayerDAO {
     }
 
     public int createPlayer(String playerName, Color color) throws SQLException {
-
         String sql = "INSERT INTO public.player(name, color) VALUES (?, ?);";
-
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, playerName);

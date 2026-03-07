@@ -4,6 +4,8 @@
 
 package com.mycompany.ludo;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Haidar
@@ -11,6 +13,11 @@ package com.mycompany.ludo;
 public class Ludo {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        JFrame frame = new JFrame("Ludo");
+        frame.setSize(400, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setFocusable(true);
+        frame.setVisible(true);
     }
 }

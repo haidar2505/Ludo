@@ -5,6 +5,7 @@
 package com.mycompany.ludo.controller;
 
 import com.mycompany.ludo.DAO.GameDAO;
+import com.mycompany.ludo.model.Game;
 import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public class GameController {
         gameDAO.createGame();
     }
     
-    public void endGame(int gameId, int winnerId) throws SQLException {
-        gameDAO.endGame(gameId, winnerId);
+    public void endGame(Game game) throws SQLException {
+        gameDAO.endGame(game);
     }
 }
