@@ -8,6 +8,6 @@ package com.mycompany.ludo.controller;
  *
  * @author Haidar
  */
-public class Board {
+public class BoardController {
     
 }

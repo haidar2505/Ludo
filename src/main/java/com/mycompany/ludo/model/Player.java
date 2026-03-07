@@ -14,10 +14,9 @@ public class Player {
     private String name;
     private Color color;
 
-    public Player(int playerId, String name, Color color) {
-        this.playerId = playerId;
-        this.name = name;
-        this.color = color;
+    private int numberOfPlayers;
+
+    public Player() {
     }
 
     public int getPlayerId() {
@@ -42,6 +41,14 @@ public class Player {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
     }
 
 }
