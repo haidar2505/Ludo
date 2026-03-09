@@ -29,11 +29,13 @@ public class PlayerController {
     public void createPlayer(Color color) throws SQLException{
         int numberOfPlayers = player.getNumberOfPlayers();
         Color[] colors = {Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
+        // Not all player will play (2 or 3 player can play)
         for(int i=0; i < numberOfPlayers; i++){
             player.setName("Player"+i+1);
+            // Change functionality later player will chose the color
             player.setColor(colors[i]);
-            daoPlayer.createPlayer(player.getName(), player.getColor());
+            daoPlayer.createPlayer(player.getName(), player.getColor(), true);
         }
-        cGame.startGame();
+//        cGame.startGame();
     }
 }
