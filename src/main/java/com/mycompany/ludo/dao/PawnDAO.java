@@ -7,6 +7,7 @@ package com.mycompany.ludo.DAO;
 import com.mycompany.ludo.model.Pawn;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -34,13 +35,30 @@ public class PawnDAO {
 
         return 0;
     }
-    
-//    public int selectPawn(int id){
-//        
-//    }
+
+    public Pawn selectPawn(int id) throws SQLException {
+        String sql = "SELECT * FROM public.pawn WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Pawn pawn = new Pawn();
+                pawn.setPawnId(rs.getInt(1));
+                pawn.setPlayerId(rs.getInt(2));
+                pawn.setPosition(rs.getInt(3));
+                pawn.setIsHome(rs.getBoolean(4));
+                pawn.setIsFinished(rs.getBoolean(5));
+                return pawn;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public int movePawn(Pawn pawn) throws SQLException {
-        String sql = "UPDATE public.game SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, pawn.getPosition());
@@ -54,15 +72,26 @@ public class PawnDAO {
         }
         return 0;
     }
-    
-    public int returnHomePawn(Pawn pawn){
-        String sql = "UPDATE public.game SET position=?, ishome = ? WHERE pawnid = ?;";
+
+    public int returnHomePawn(Pawn pawn) throws SQLException {
+        String sql = "UPDATE public.pawn SET position=?, ishome = ? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, pawn.getPosition());
             stmt.setBoolean(2, true);
             pawn.setIsHome(true);
             stmt.setInt(3, pawn.getPlayerId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int deleteAllPawn() throws SQLException {
+        String sql = "TRUNCATE TABLE public.pawn CASCADE;";
+        try {
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

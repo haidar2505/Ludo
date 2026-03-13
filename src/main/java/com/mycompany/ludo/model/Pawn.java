@@ -16,12 +16,7 @@ public class Pawn {
     private boolean isHome;
     private boolean isFinished;
 
-    public Pawn(int pawnId, int playerId, int position, boolean isHome, boolean isFinished) {
-        this.pawnId = pawnId;
-        this.playerId = playerId;
-        this.position = position;
-        this.isHome = isHome;
-        this.isFinished = isFinished;
+    public Pawn() {
     }
 
     public int getPawnId() {

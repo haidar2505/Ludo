@@ -25,7 +25,7 @@ public class Ludo {
     }
 
     public void run() throws SQLException {
-        cPlayer.createPlayer();
+//        cPlayer.createPlayer();
 //        daoPlayer.deletePlayers();
     }
 

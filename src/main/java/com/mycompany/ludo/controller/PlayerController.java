@@ -38,7 +38,11 @@ public class PlayerController {
             // Change functionality later player will chose the color
             player.setColor(colors[i]);
             int playerId = daoPlayer.createPlayer(player.getName(), player.getColor(), true);
-            cPawn.createPawn(playerId);
+            if(playerId != 0){
+                for(int j=0; j<4; j++){
+                    cPawn.createPawn(playerId);
+                }
+            }
             
         }
 //        cGame.startGame();
