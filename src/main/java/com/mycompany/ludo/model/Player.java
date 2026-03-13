@@ -13,9 +13,6 @@ public class Player {
     private int playerId;
     private String name;
     private Color color;
-    private boolean isActive;
-
-    private int numberOfPlayers;
 
     public Player() {
     }
@@ -42,21 +39,5 @@ public class Player {
 
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    public int getNumberOfPlayers() {
-        return numberOfPlayers;
-    }
-
-    public void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-    }
-
-    public boolean getIsActive(){
-        return isActive;
-    }
-    
-    public void setIsActive(boolean isActive){
-        this.isActive = isActive;
     }
 }

@@ -16,6 +16,8 @@ public class Game {
     private String startTime;
     private String endTime;
     private int winnerId;
+    
+    private int numberOfPlayers;
 
     public Game() {
     }
@@ -51,5 +53,12 @@ public class Game {
     public void setWinnerId(int winnerId) {
         this.winnerId = winnerId;
     }
+    
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
 
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
+    }
 }

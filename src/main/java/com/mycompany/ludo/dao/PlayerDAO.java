@@ -24,35 +24,48 @@ public class PlayerDAO {
     }
 
     public int createPlayer(String playerName, Color color, Boolean isActive) throws SQLException {
-        String sql = "INSERT INTO public.player(name, color) VALUES (?, ?);";
+        String sql = "INSERT INTO public.player(name, color) VALUES (?, ?) RETURNING playerid;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, playerName);
             stmt.setString(2, color.name());
-            stmt.setBoolean(3, isActive);
-            stmt.executeUpdate();
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
     
-    public Player switchPlayer() throws SQLException {
+    public Player switchPlayer(int playerId) throws SQLException {
         String sql = "SELECT TOP 1 * FROM public.player WHERE playerid >= ?";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 Player player = new Player();
                 player.setPlayerId(rs.getInt(1));
                 player.setName(rs.getString(2));
                 player.setColor(Color.valueOf(rs.getString(3)));
-                player.setIsActive(rs.getBoolean(4));
                 return player;
             }
         } catch (SQLException e){
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public int deletePlayers() throws SQLException {
+        String sql = "TRUNCATE TABLE public.player CASCADE;";
+        try {
+            PreparedStatement stmt = c.prepareCall(sql);
+            stmt.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

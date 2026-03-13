@@ -18,13 +18,15 @@ public class GameController {
 
     private GameDAO gameDAO;
     Player player = new Player();
+    Game game = new Game();
 
     public GameController(Connection c) {
         this.gameDAO = new GameDAO(c);
     }
 
-    public void numberOfPlayers(int players) {
-        player.setNumberOfPlayers(players);
+    public int numberOfPlayers() {
+        game.setNumberOfPlayers(2);
+        return game.getNumberOfPlayers();
     }
 
     public void startGame() throws SQLException {
