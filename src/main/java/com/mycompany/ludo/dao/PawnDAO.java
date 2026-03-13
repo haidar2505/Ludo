@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,6 +22,27 @@ public class PawnDAO {
 
     public PawnDAO(Connection c) {
         this.c = c;
+    }
+
+    public List<Pawn> getAllPawn() throws SQLException {
+        List<Pawn> pawns = new ArrayList();
+        String sql = "SELECT * FROM public.Pawn;";
+        try {
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Pawn pawn = new Pawn();
+                pawn.setPawnId(rs.getInt(1));
+                pawn.setPlayerId(rs.getInt(2));
+                pawn.setPosition(rs.getInt(3));
+                pawn.setIsHome(rs.getBoolean(4));
+                pawn.setIsFinished(rs.getBoolean(5));
+                pawns.add(pawn);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pawns;
     }
 
     public int createPawn(int playerId) throws SQLException {
@@ -36,26 +59,26 @@ public class PawnDAO {
         return 0;
     }
 
-    public Pawn selectPawn(int id) throws SQLException {
-        String sql = "SELECT * FROM public.pawn WHERE pawnid = ?;";
-        try {
-            PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Pawn pawn = new Pawn();
-                pawn.setPawnId(rs.getInt(1));
-                pawn.setPlayerId(rs.getInt(2));
-                pawn.setPosition(rs.getInt(3));
-                pawn.setIsHome(rs.getBoolean(4));
-                pawn.setIsFinished(rs.getBoolean(5));
-                return pawn;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    public Pawn selectPawn(int id) throws SQLException {
+//        String sql = "SELECT * FROM public.pawn WHERE pawnid = ?;";
+//        try {
+//            PreparedStatement stmt = c.prepareStatement(sql);
+//            stmt.setInt(1, id);
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                Pawn pawn = new Pawn();
+//                pawn.setPawnId(rs.getInt(1));
+//                pawn.setPlayerId(rs.getInt(2));
+//                pawn.setPosition(rs.getInt(3));
+//                pawn.setIsHome(rs.getBoolean(4));
+//                pawn.setIsFinished(rs.getBoolean(5));
+//                return pawn;
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     public int movePawn(Pawn pawn) throws SQLException {
         String sql = "UPDATE public.pawn SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
