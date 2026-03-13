@@ -9,42 +9,39 @@ import com.mycompany.ludo.model.Color;
 import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
  * @author Haidar
  */
 public class PlayerController {
-    
-    Player player = new Player();
-    
+
+
     private PlayerDAO daoPlayer;
     private GameController cGame;
     private PawnController cPawn;
 
-    public PlayerController (Connection c) {
+    public PlayerController(Connection c) {
         this.daoPlayer = new PlayerDAO(c);
         this.cGame = new GameController(c);
         this.cPawn = new PawnController(c);
     }
-    
-    public void createPlayer() throws SQLException{
+
+    public void createPlayer() throws SQLException {
         int numberOfPlayers = cGame.numberOfPlayers();
         System.out.println(numberOfPlayers);
         Color[] colors = {Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
-        // Not all player will play (2 or 3 player can play)
-        for(int i=0; i < numberOfPlayers; i++){
-            player.setName("Player"+(i+1));
-            // Change functionality later player will chose the color
-            player.setColor(colors[i]);
-            int playerId = daoPlayer.createPlayer(player.getName(), player.getColor(), true);
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            int playerId = daoPlayer.createPlayer("Player" + (i + 1), colors[i]);
             if(playerId != 0){
                 for(int j=0; j<4; j++){
                     cPawn.createPawn(playerId);
                 }
             }
-            
         }
 //        cGame.startGame();
+    
     }
 }

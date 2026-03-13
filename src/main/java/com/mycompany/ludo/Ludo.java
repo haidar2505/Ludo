@@ -3,11 +3,14 @@
  */
 package com.mycompany.ludo;
 
+import com.mycompany.ludo.DAO.PawnDAO;
 import com.mycompany.ludo.DAO.PlayerDAO;
 import com.mycompany.ludo.connection.Connectivity;
 import com.mycompany.ludo.controller.PlayerController;
+import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import javax.swing.JFrame;
 
 /**
@@ -18,14 +21,17 @@ public class Ludo {
 
     private PlayerDAO daoPlayer;
     private PlayerController cPlayer;
+    private PawnDAO daoPawn;
 
     public Ludo(Connection c) {
         this.daoPlayer = new PlayerDAO(c);
+        this.daoPawn = new PawnDAO(c);
         this.cPlayer = new PlayerController(c);
     }
 
     public void run() throws SQLException {
-//        cPlayer.createPlayer();
+        cPlayer.createPlayer();
+//        daoPawn.deleteAllPawn();
 //        daoPlayer.deletePlayers();
     }
 

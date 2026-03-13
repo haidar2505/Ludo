@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -23,14 +25,33 @@ public class PlayerDAO {
         this.c = c;
     }
 
-    public int createPlayer(String playerName, Color color, Boolean isActive) throws SQLException {
+    public List<Player> getAllPlayer() throws SQLException {
+        List<Player> players = new ArrayList();
+        String sql = "SELECT * FROM public.player;";
+        try {
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Player player = new Player();
+                player.setPlayerId(rs.getInt(1));
+                player.setName(rs.getString(2));
+                player.setColor(Color.valueOf(rs.getString(3)));
+                players.add(player);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+    public int createPlayer(String playerName, Color color) throws SQLException {
         String sql = "INSERT INTO public.player(name, color) VALUES (?, ?) RETURNING playerid;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, playerName);
             stmt.setString(2, color.name());
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
@@ -38,32 +59,32 @@ public class PlayerDAO {
         }
         return 0;
     }
-    
+
     public Player switchPlayer(int playerId) throws SQLException {
         String sql = "SELECT TOP 1 * FROM public.player WHERE playerid >= ?";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 Player player = new Player();
                 player.setPlayerId(rs.getInt(1));
                 player.setName(rs.getString(2));
                 player.setColor(Color.valueOf(rs.getString(3)));
                 return player;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    
+
     public int deletePlayers() throws SQLException {
         String sql = "TRUNCATE TABLE public.player CASCADE;";
         try {
             PreparedStatement stmt = c.prepareCall(sql);
             stmt.executeUpdate();
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
