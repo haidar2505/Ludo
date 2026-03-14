@@ -1,10 +1,11 @@
-    /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+*/
 package com.mycompany.ludo.controller;
 
 import java.awt.Color;
+import com.mycompany.ludo.model.PlayerColor;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -20,6 +21,16 @@ import javax.swing.SwingConstants;
  * @author Haidar
  */
 public class LudoBoard extends JPanel {
+    
+    private Color toAwtColor(PlayerColor color) {
+    switch (color) {
+        case RED:    return Color.RED;
+        case BLUE:   return Color.BLUE;
+        case YELLOW: return Color.YELLOW;
+        case GREEN:  return Color.GREEN;
+        default:     return Color.GRAY;
+    }
+}
     
     private final JPanel[][] cells = new JPanel[15][15];
  
@@ -49,8 +60,6 @@ public class LudoBoard extends JPanel {
                 add(cell);
             }
         }
- 
-        placeStartingTokens();
     }
  
     private void setCellColor(int r, int c, JPanel cell) {
@@ -80,43 +89,20 @@ public class LudoBoard extends JPanel {
         cell.setBackground(Color.WHITE);
     }
  
-    private void placeStartingTokens() {
- 
-        // Four tokens per color
-        addToken(1, 1, Color.RED);
-        addToken(1, 4, Color.RED);
-        addToken(4, 1, Color.RED);
-        addToken(4, 4, Color.RED);
- 
-        addToken(1, 10, Color.GREEN);
-        addToken(1, 13, Color.GREEN);
-        addToken(4, 10, Color.GREEN);
-        addToken(4, 13, Color.GREEN);
- 
-        addToken(10, 1, Color.YELLOW);
-        addToken(10, 4, Color.YELLOW);
-        addToken(13, 1, Color.YELLOW);
-        addToken(13, 4, Color.YELLOW);
- 
-        addToken(10, 10, Color.BLUE);
-        addToken(10, 13, Color.BLUE);
-        addToken(13, 10, Color.BLUE);
-        addToken(13, 13, Color.BLUE);
-    }
- 
-    private void addToken(int row, int col, Color color) {
+    public void initializePawn(int row, int col, PlayerColor color) {
         JLabel token = new JLabel("●");
-        token.setForeground(color);
+        token.setForeground(toAwtColor(color));
         token.setFont(new Font("Arial", Font.BOLD, 40));
         token.setHorizontalAlignment(SwingConstants.CENTER);
         cells[row][col].setLayout(new GridLayout(1, 1));
         cells[row][col].add(token);
         cells[row][col].revalidate();
+        cells[row][col].repaint();
         
     }
  
     // MAIN FOR TESTING
-    public static void main(String[] args) {
+    public static void runBoard() {
         JFrame frame = new JFrame("Ludo Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 700);

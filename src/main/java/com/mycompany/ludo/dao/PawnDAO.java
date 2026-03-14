@@ -4,6 +4,7 @@
  */
 package com.mycompany.ludo.DAO;
 
+import com.mycompany.ludo.model.PlayerColor;
 import com.mycompany.ludo.model.Pawn;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,17 +28,19 @@ public class PawnDAO {
 
     public List<Pawn> getAllPawn() throws SQLException {
         List<Pawn> pawns = new ArrayList();
-        String sql = "SELECT * FROM public.Pawn;";
+        String sql = "SELECT p.pawnid, p.playerid, p.row, p.col, p.ishome, p.isfinished, pl.color FROM public.pawn AS p JOIN public.player AS pl ON p.playerid = pl.playerid;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 Pawn pawn = new Pawn();
                 pawn.setPawnId(rs.getInt(1));
                 pawn.setPlayerId(rs.getInt(2));
-                pawn.setPosition((PGpoint) rs.getObject(3));
-                pawn.setIsHome(rs.getBoolean(4));
-                pawn.setIsFinished(rs.getBoolean(5));
+                pawn.setRow(rs.getInt(3));
+                pawn.setCol(rs.getInt(4));
+                pawn.setIsHome(rs.getBoolean(5));
+                pawn.setIsFinished(rs.getBoolean(6));
+                pawn.setColor(PlayerColor.valueOf(rs.getString(7)));
                 pawns.add(pawn);
             }
         } catch (SQLException e) {
@@ -46,12 +49,13 @@ public class PawnDAO {
         return pawns;
     }
 
-    public int createPawn(int playerId, PGpoint position) throws SQLException {
-        String sql = "INSERT INTO public.pawn(playerid, position) VALUES (?, ?);";
+    public int createPawn(int playerId, int row, int col) throws SQLException {
+        String sql = "INSERT INTO public.pawn(playerid, row, col) VALUES (?, ?, ?);";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
-            stmt.setObject(2, position);
+            stmt.setInt(2, row);
+            stmt.setInt(3, col);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,14 +86,14 @@ public class PawnDAO {
 //    }
 
     public int movePawn(Pawn pawn) throws SQLException {
-        String sql = "UPDATE public.pawn SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET row=?, col=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setObject(1, pawn.getPosition());
-            stmt.setBoolean(2, false);
-            pawn.setIsHome(false);
-            stmt.setBoolean(3, pawn.isIsFinished());
-            stmt.setInt(3, pawn.getPawnId());
+            stmt.setInt(1, pawn.getRow());
+            stmt.setInt(2, pawn.getCol());
+            stmt.setBoolean(3, pawn.getIsHome());
+            stmt.setBoolean(4, pawn.getIsFinished());
+            stmt.setInt(5, pawn.getPawnId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,13 +102,13 @@ public class PawnDAO {
     }
 
     public int returnHomePawn(Pawn pawn) throws SQLException {
-        String sql = "UPDATE public.pawn SET position=?, ishome = ? WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET row=?, col=?, ishome = ? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setObject(1, pawn.getPosition());
-            stmt.setBoolean(2, true);
+            stmt.setObject(1, pawn.getRow());
+            stmt.setInt(2, pawn.getCol());
             pawn.setIsHome(true);
-            stmt.setInt(3, pawn.getPlayerId());
+            stmt.setInt(4, pawn.getPlayerId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

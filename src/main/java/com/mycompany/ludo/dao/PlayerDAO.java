@@ -4,7 +4,7 @@
  */
 package com.mycompany.ludo.DAO;
 
-import com.mycompany.ludo.model.Color;
+import com.mycompany.ludo.model.PlayerColor;
 import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,11 +31,11 @@ public class PlayerDAO {
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 Player player = new Player();
                 player.setPlayerId(rs.getInt(1));
                 player.setName(rs.getString(2));
-                player.setColor(Color.valueOf(rs.getString(3)));
+                player.setColor(PlayerColor.valueOf(rs.getString(3)));
                 players.add(player);
             }
         } catch (SQLException e) {
@@ -44,7 +44,7 @@ public class PlayerDAO {
         return players;
     }
 
-    public int createPlayer(String playerName, Color color) throws SQLException {
+    public int createPlayer(String playerName, PlayerColor color) throws SQLException {
         String sql = "INSERT INTO public.player(name, color) VALUES (?, ?) RETURNING playerid;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
@@ -61,7 +61,7 @@ public class PlayerDAO {
     }
 
     public Player switchPlayer(int playerId) throws SQLException {
-        String sql = "SELECT TOP 1 * FROM public.player WHERE playerid >= ?";
+        String sql = "SELECT * FROM public.player WHERE playerid >= ? LIMIT 1;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
@@ -70,7 +70,7 @@ public class PlayerDAO {
                 Player player = new Player();
                 player.setPlayerId(rs.getInt(1));
                 player.setName(rs.getString(2));
-                player.setColor(Color.valueOf(rs.getString(3)));
+                player.setColor(PlayerColor.valueOf(rs.getString(3)));
                 return player;
             }
         } catch (SQLException e) {

@@ -6,6 +6,7 @@ package com.mycompany.ludo;
 import com.mycompany.ludo.DAO.PawnDAO;
 import com.mycompany.ludo.DAO.PlayerDAO;
 import com.mycompany.ludo.connection.Connectivity;
+import com.mycompany.ludo.controller.LudoBoard;
 import com.mycompany.ludo.controller.PlayerController;
 import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
@@ -22,11 +23,13 @@ public class Ludo {
     private PlayerDAO daoPlayer;
     private PlayerController cPlayer;
     private PawnDAO daoPawn;
+    private LudoBoard LBoard;
 
     public Ludo(Connection c) {
         this.daoPlayer = new PlayerDAO(c);
         this.daoPawn = new PawnDAO(c);
         this.cPlayer = new PlayerController(c);
+        this.LBoard = new LudoBoard();
     }
 
     public void run() throws SQLException {
@@ -44,7 +47,8 @@ public class Ludo {
 //        frame.setVisible(true);
         Connection conn = Connectivity.getConnection();
         Ludo ludo = new Ludo(conn);
-        ludo.run();
+//        ludo.run();
+        LudoBoard.runBoard();
 //        daoPlayer.switchPlayer(2);
     }
 }

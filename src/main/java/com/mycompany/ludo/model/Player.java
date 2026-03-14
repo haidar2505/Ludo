@@ -12,7 +12,7 @@ public class Player {
 
     private int playerId;
     private String name;
-    private Color color;
+    private PlayerColor color;
 
     public Player() {
     }
@@ -33,11 +33,11 @@ public class Player {
         this.name = name;
     }
 
-    public Color getColor() {
+    public PlayerColor getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(PlayerColor color) {
         this.color = color;
     }
 }

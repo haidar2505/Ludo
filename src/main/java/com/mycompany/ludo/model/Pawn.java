@@ -4,8 +4,6 @@
  */
 package com.mycompany.ludo.model;
 
-import org.postgresql.geometric.PGpoint;
-
 /**
  *
  * @author Haidar
@@ -14,9 +12,12 @@ public class Pawn {
 
     private int pawnId;
     private int playerId;
-    private PGpoint position;
+    private int row;
+    private int col;
     private boolean isHome;
     private boolean isFinished;
+    
+    private PlayerColor color;
 
     public Pawn() {
     }
@@ -37,15 +38,23 @@ public class Pawn {
         this.playerId = playerId;
     }
 
-    public PGpoint getPosition() {
-        return position;
+    public int getRow() {
+        return row;
     }
 
-    public void setPosition(PGpoint position) {
-        this.position = position;
+    public void setRow(int row) {
+        this.row = row;
     }
 
-    public boolean isIsHome() {
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    public boolean getIsHome() {
         return isHome;
     }
 
@@ -53,7 +62,7 @@ public class Pawn {
         this.isHome = isHome;
     }
 
-    public boolean isIsFinished() {
+    public boolean getIsFinished() {
         return isFinished;
     }
 
@@ -61,4 +70,12 @@ public class Pawn {
         this.isFinished = isFinished;
     }
 
+    public PlayerColor getColor() {
+        return color;
+    }
+
+    public void setColor(PlayerColor color) {
+        this.color = color;
+    }
+    
 }

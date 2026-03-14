@@ -8,7 +8,7 @@ package com.mycompany.ludo.model;
  *
  * @author Haidar
  */
-public enum Color {
+public enum PlayerColor {
     
     RED, BLUE, GREEN, YELLOW
 
