@@ -4,6 +4,8 @@
  */
 package com.mycompany.ludo.model;
 
+import org.postgresql.geometric.PGpoint;
+
 /**
  *
  * @author Haidar
@@ -12,7 +14,7 @@ public class Pawn {
 
     private int pawnId;
     private int playerId;
-    private int position;
+    private PGpoint position;
     private boolean isHome;
     private boolean isFinished;
 
@@ -35,11 +37,11 @@ public class Pawn {
         this.playerId = playerId;
     }
 
-    public int getPosition() {
+    public PGpoint getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(PGpoint position) {
         this.position = position;
     }
 

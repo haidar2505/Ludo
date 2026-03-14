@@ -41,7 +41,7 @@ public class PlayerController {
                 }
             }
         }
-//        cGame.startGame();
+        cGame.startGame();
     
     }
 }

@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.postgresql.geometric.PGpoint;
 
 /**
  *
@@ -34,7 +35,7 @@ public class PawnDAO {
                 Pawn pawn = new Pawn();
                 pawn.setPawnId(rs.getInt(1));
                 pawn.setPlayerId(rs.getInt(2));
-                pawn.setPosition(rs.getInt(3));
+                pawn.setPosition((PGpoint) rs.getObject(3));
                 pawn.setIsHome(rs.getBoolean(4));
                 pawn.setIsFinished(rs.getBoolean(5));
                 pawns.add(pawn);
@@ -50,7 +51,7 @@ public class PawnDAO {
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
-            stmt.setInt(2, 0);
+            stmt.setObject(2, new PGpoint(0,0));
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +85,7 @@ public class PawnDAO {
         String sql = "UPDATE public.pawn SET position=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setInt(1, pawn.getPosition());
+            stmt.setObject(1, pawn.getPosition());
             stmt.setBoolean(2, false);
             pawn.setIsHome(false);
             stmt.setBoolean(3, pawn.isIsFinished());
@@ -100,7 +101,7 @@ public class PawnDAO {
         String sql = "UPDATE public.pawn SET position=?, ishome = ? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setInt(1, pawn.getPosition());
+            stmt.setObject(1, pawn.getPosition());
             stmt.setBoolean(2, true);
             pawn.setIsHome(true);
             stmt.setInt(3, pawn.getPlayerId());
