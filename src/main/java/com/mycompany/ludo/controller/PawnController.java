@@ -7,6 +7,7 @@ package com.mycompany.ludo.controller;
 import com.mycompany.ludo.DAO.PawnDAO;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.postgresql.geometric.PGpoint;
 
 /**
  *
@@ -20,11 +21,15 @@ public class PawnController {
         this.daoPawn = new PawnDAO(c);
     }
         
-    public void createPawn(int playerId) throws SQLException{
-        daoPawn.createPawn(playerId);
+    public void createPawn(int playerId, PGpoint position) throws SQLException{
+        daoPawn.createPawn(playerId, position);
     }
     
     public void movePawn(int numberRolled){
+        
+    }
+    
+    public void verifyPawn(){
         
     }
 }

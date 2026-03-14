@@ -27,12 +27,11 @@ public class GameDAO {
     }
 
     public int createGame() throws SQLException {
-        String sql = "INSERT INTO public.game(starttime, endtime, winnerid) VALUES (?, ?, ?); ";
+        String sql = "INSERT INTO public.game(starttime, endtime) VALUES (?, ?); ";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setNull(2, Types.TIMESTAMP);
-            stmt.setNull(3, Types.INTEGER);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,7 +49,6 @@ public class GameDAO {
                 infoGame.setGameId(rs.getInt(1));
                 infoGame.setStartTime(rs.getString(2));
                 infoGame.setEndTime(rs.getString(3));
-                infoGame.setWinnerId(rs.getInt(4));
                 return infoGame;
             }
         } catch (SQLException e) {
@@ -60,16 +58,13 @@ public class GameDAO {
     }
 
     public int endGame(Game game) throws SQLException {
-        String sql = "UPDATE public.game SET endtime=?, winnerid=? WHERE gameid = ?;";
+        String sql = "UPDATE public.game SET endtime=? WHERE gameid = ?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setInt(2, game.getWinnerId());
             stmt.setInt(3, game.getGameId());
             stmt.executeUpdate();
-            System.out.println("Game sucessfully created");
         } catch (SQLException e) {
-            System.out.println("Creation failed");
             e.printStackTrace();
         }
         return 0;

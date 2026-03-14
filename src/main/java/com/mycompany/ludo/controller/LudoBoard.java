@@ -20,7 +20,7 @@ import javax.swing.SwingConstants;
  * @author Haidar
  */
 public class LudoBoard extends JPanel {
-        
+    
     private final JPanel[][] cells = new JPanel[15][15];
  
     public LudoBoard() {
@@ -112,6 +112,7 @@ public class LudoBoard extends JPanel {
         cells[row][col].setLayout(new GridLayout(1, 1));
         cells[row][col].add(token);
         cells[row][col].revalidate();
+        
     }
  
     // MAIN FOR TESTING

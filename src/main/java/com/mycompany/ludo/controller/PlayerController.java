@@ -6,10 +6,9 @@ package com.mycompany.ludo.controller;
 
 import com.mycompany.ludo.DAO.PlayerDAO;
 import com.mycompany.ludo.model.Color;
-import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import org.postgresql.geometric.PGpoint;
 
 /**
  *
@@ -32,16 +31,22 @@ public class PlayerController {
         int numberOfPlayers = cGame.numberOfPlayers();
         System.out.println(numberOfPlayers);
         Color[] colors = {Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
-
+        
+        PGpoint[][] startingPositions = {
+            {new PGpoint(1,1), new PGpoint(1,4), new PGpoint(4,1), new PGpoint(4,4)},
+            {new PGpoint(1,10), new PGpoint(1,13), new PGpoint(4,10), new PGpoint(4,13)},
+            {new PGpoint(10,1), new PGpoint(10,4), new PGpoint(13,1), new PGpoint(13,4)},
+            {new PGpoint(10,10), new PGpoint(10,13), new PGpoint(13,10), new PGpoint(13,13)}
+        };
+        
         for (int i = 0; i < numberOfPlayers; i++) {
             int playerId = daoPlayer.createPlayer("Player" + (i + 1), colors[i]);
             if(playerId != 0){
                 for(int j=0; j<4; j++){
-                    cPawn.createPawn(playerId);
+                    cPawn.createPawn(playerId, startingPositions[i][j]);
                 }
             }
         }
         cGame.startGame();
-    
     }
 }

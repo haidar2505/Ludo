@@ -46,12 +46,12 @@ public class PawnDAO {
         return pawns;
     }
 
-    public int createPawn(int playerId) throws SQLException {
+    public int createPawn(int playerId, PGpoint position) throws SQLException {
         String sql = "INSERT INTO public.pawn(playerid, position) VALUES (?, ?);";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, playerId);
-            stmt.setObject(2, new PGpoint(0,0));
+            stmt.setObject(2, position);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
