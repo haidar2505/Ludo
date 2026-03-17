@@ -40,7 +40,7 @@ public class GameDAO {
     }
 
     public Game gameInfo() throws SQLException {
-        String sql = "SELECT * FROM public.game;";
+        String sql = "SELECT * FROM public.game ORDER BY gameid DESC LIMIT 1;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

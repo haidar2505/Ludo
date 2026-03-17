@@ -85,20 +85,20 @@ public class PawnDAO {
 //        return null;
 //    }
 
-    public int movePawn(Pawn pawn) throws SQLException {
-        String sql = "UPDATE public.pawn SET row=?, col=?, ishome = ?, isfinished=? WHERE pawnid = ?;";
+    public void updatePawn(Pawn pawn) throws SQLException {
+        String sql = "UPDATE public.pawn SET row=?, col=?, ishome=?, isfinished=?, pathposition=? WHERE pawnid=?;";
         try {
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setInt(1, pawn.getRow());
             stmt.setInt(2, pawn.getCol());
             stmt.setBoolean(3, pawn.getIsHome());
             stmt.setBoolean(4, pawn.getIsFinished());
-            stmt.setInt(5, pawn.getPawnId());
+            stmt.setInt(5, pawn.getPathPosition());
+            stmt.setInt(6, pawn.getPawnId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
     }
 
     public int returnHomePawn(Pawn pawn) throws SQLException {

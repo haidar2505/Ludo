@@ -18,7 +18,8 @@ public class Pawn {
     private boolean isFinished;
     
     private PlayerColor color;
-
+    private int pathPosition = 0;
+ 
     public Pawn() {
     }
 
@@ -76,6 +77,14 @@ public class Pawn {
 
     public void setColor(PlayerColor color) {
         this.color = color;
+    }
+    
+    public int getPathPosition() {
+        return pathPosition;
+    }
+    
+    public void setPathPosition(int pathPosition) {
+        this.pathPosition = pathPosition; 
     }
     
 }
