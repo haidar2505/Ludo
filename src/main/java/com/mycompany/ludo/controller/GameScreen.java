@@ -20,46 +20,40 @@ import javax.swing.*;
  
 public class GameScreen extends JFrame {
  
-    // ── Full 52-cell board path (row, col) clockwise from Red entry ────────
     private static final int[][] PATH = {
-        {6,1},{6,2},{6,3},{6,4},{6,5},           // bottom of Red home col
-        {5,6},{4,6},{3,6},{2,6},{1,6},{0,6},      // up left col
-        {0,7},                                     // top-left corner
-        {0,8},{1,8},{2,8},{3,8},{4,8},{5,8},      // down right col
-        {6,9},{6,10},{6,11},{6,12},{6,13},{6,14}, // right of Green home row
-        {7,14},                                    // right edge
-        {8,14},{8,13},{8,12},{8,11},{8,10},{8,9}, // left of Blue home row
-        {9,8},{10,8},{11,8},{12,8},{13,8},{14,8}, // down right col
-        {14,7},                                    // bottom edge
-        {14,6},{13,6},{12,6},{11,6},{10,6},{9,6}, // up left col
-        {8,5},{8,4},{8,3},{8,2},{8,1},{8,0},      // left of Yellow home row
-        {7,0}                                      // left edge
+        {6,1},{6,2},{6,3},{6,4},{6,5},           
+        {5,6},{4,6},{3,6},{2,6},{1,6},{0,6},      
+        {0,7},                                     
+        {0,8},{1,8},{2,8},{3,8},{4,8},{5,8},      
+        {6,9},{6,10},{6,11},{6,12},{6,13},{6,14}, 
+        {7,14},                                    
+        {8,14},{8,13},{8,12},{8,11},{8,10},{8,9}, 
+        {9,8},{10,8},{11,8},{12,8},{13,8},{14,8}, 
+        {14,7},                                    
+        {14,6},{13,6},{12,6},{11,6},{10,6},{9,6}, 
+        {8,5},{8,4},{8,3},{8,2},{8,1},{8,0},      
+        {7,0}                                      
     };
  
-    // Index on PATH where each color enters
-    private static final int[] ENTRY_INDEX = {0, 13, 26, 39}; // RED=0,BLUE=13,YELLOW=26,GREEN=39
+    private static final int[] ENTRY_INDEX = {0, 13, 26, 39};
  
-    // Home stretch for each color (6 cells leading to center)
     private static final int[][][] HOME_STRETCH = {
-        {{7,1},{7,2},{7,3},{7,4},{7,5},{7,6}},     // RED  → right
-        {{1,7},{2,7},{3,7},{4,7},{5,7},{6,7}},     // BLUE → down
-        {{7,13},{7,12},{7,11},{7,10},{7,9},{7,8}}, // YELLOW → left
-        {{13,7},{12,7},{11,7},{10,7},{9,7},{8,7}}  // GREEN → up
+        {{7,1},{7,2},{7,3},{7,4},{7,5},{7,6}},    
+        {{1,7},{2,7},{3,7},{4,7},{5,7},{6,7}},    
+        {{7,13},{7,12},{7,11},{7,10},{7,9},{7,8}}, 
+        {{13,7},{12,7},{11,7},{10,7},{9,7},{8,7}}  
     };
  
-    // ── Dependencies ──────────────────────────────────────────────────────
     private final DiceController diceCtrl = new DiceController();
     private final PawnController pawnCtrl;
     private final PlayerController playerCtrl;
  
-    // ── Game state ────────────────────────────────────────────────────────
     private List<Player> players;
     private List<Pawn> pawns;
     private int currentPlayerIndex = 0;
     private int lastRoll = 0;
     private boolean diceRolled = false;
  
-    // ── UI ────────────────────────────────────────────────────────────────
     private LudoBoard board;
     private JLabel diceLabel;
     private JButton rollBtn;
@@ -83,25 +77,22 @@ public class GameScreen extends JFrame {
         setVisible(true);
     }
  
-    // ── Build UI ──────────────────────────────────────────────────────────
     private void buildUI() {
         getContentPane().setBackground(new Color(20, 20, 50));
         setLayout(new BorderLayout(8, 8));
  
-        // Board
         board = pawnCtrl.getBoard();
         board.setPreferredSize(new Dimension(630, 630));
         board.setPawnClickListener(this::onCellClicked);
         add(board, BorderLayout.CENTER);
  
-        // Side panel
         JPanel side = new JPanel();
         side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
         side.setBackground(new Color(20, 20, 50));
         side.setPreferredSize(new Dimension(190, 630));
         side.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
  
-        // Turn label
+        // Turn
         turnLabel = new JLabel("", SwingConstants.CENTER);
         turnLabel.setFont(new Font("Arial Black", Font.BOLD, 17));
         turnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -181,7 +172,7 @@ public class GameScreen extends JFrame {
         add(side, BorderLayout.EAST);
     }
  
-    // ── Roll dice ─────────────────────────────────────────────────────────
+    // Roll dice
     private void onRollDice() {
         if (diceRolled) {
             setStatus("Already rolled!<br>Select a pawn.");
@@ -211,7 +202,6 @@ public class GameScreen extends JFrame {
         }
     }
  
-    // ── Cell clicked ──────────────────────────────────────────────────────
     private void onCellClicked(int row, int col) {
         if (!diceRolled) return;
         Player current = players.get(currentPlayerIndex);
@@ -227,7 +217,6 @@ public class GameScreen extends JFrame {
         }
     }
  
-    // ── Get movable pawns for current player ──────────────────────────────
     private List<Pawn> getMovablePawns(Player player) {
         List<Pawn> movable = new ArrayList<>();
         for (Pawn p : pawns) {
@@ -239,7 +228,7 @@ public class GameScreen extends JFrame {
         return movable;
     }
  
-    // ── Move a pawn ───────────────────────────────────────────────────────
+    // Move a pawn
     private void movePawn(Pawn pawn) {
         int ci = colorIndex(pawn.getColor());
         int oldRow = pawn.getRow();
@@ -247,7 +236,6 @@ public class GameScreen extends JFrame {
         int newRow, newCol;
  
         if (pawn.getIsHome()) {
-            // Leave home — go to entry point
             int[] entry = PATH[ENTRY_INDEX[ci]];
             newRow = entry[0];
             newCol = entry[1];
@@ -257,13 +245,11 @@ public class GameScreen extends JFrame {
             int newPos = pawn.getPathPosition() + lastRoll;
  
             if (newPos > 57) {
-                // Overshot — can't move
                 setStatus("Can't move,<br>roll exact!");
                 diceRolled = false;
                 rollBtn.setEnabled(true);
                 return;
             } else if (newPos == 57) {
-                // Reached center — finished!
                 pawn.setIsFinished(true);
                 board.removePawn(oldRow, oldCol);
                 board.initializePawn(7, 7, pawn.getColor());
@@ -274,21 +260,17 @@ public class GameScreen extends JFrame {
                 if (lastRoll == 6) bonusTurn(); else nextTurn();
                 return;
             } else if (newPos >= 52) {
-                // Home stretch
                 int[] cell = HOME_STRETCH[ci][newPos - 52];
                 newRow = cell[0]; newCol = cell[1];
             } else {
-                // Normal path
                 int[] cell = PATH[(ENTRY_INDEX[ci] + newPos) % 52];
                 newRow = cell[0]; newCol = cell[1];
             }
             pawn.setPathPosition(newPos);
         }
  
-        // Check capture
         checkCapture(newRow, newCol, pawn);
  
-        // Move pawn visually and in DB
         board.removePawn(oldRow, oldCol);
         pawn.setRow(newRow); pawn.setCol(newCol);
         board.initializePawn(newRow, newCol, pawn.getColor());
@@ -298,16 +280,14 @@ public class GameScreen extends JFrame {
         else nextTurn();
     }
  
-    // ── Capture enemy pawn ────────────────────────────────────────────────
+    // Capture enemy pawn
     private void checkCapture(int row, int col, Pawn mover) {
         for (Pawn p : pawns) {
             if (p.getPawnId() == mover.getPawnId()) continue;
             if (p.getPlayerId() == mover.getPlayerId()) continue;
             if (p.getRow() == row && p.getCol() == col && !p.getIsHome() && !p.getIsFinished()) {
-                // Send back to starting position
                 int ci = colorIndex(p.getColor());
                 int[][][] sp = playerCtrl.getStartingPositions();
-                // Find the correct home slot for this pawn (by pawn index among player's pawns)
                 int pawnIndex = getPawnIndexForPlayer(p);
                 int homeRow = sp[ci][pawnIndex][0];
                 int homeCol = sp[ci][pawnIndex][1];
@@ -323,7 +303,6 @@ public class GameScreen extends JFrame {
         }
     }
  
-    // Get index (0-3) of a pawn among its player's pawns
     private int getPawnIndexForPlayer(Pawn target) {
         int idx = 0;
         for (Pawn p : pawns) {
@@ -335,7 +314,6 @@ public class GameScreen extends JFrame {
         return 0;
     }
  
-    // ── Bonus turn on rolling 6 ───────────────────────────────────────────
     private void bonusTurn() {
         diceRolled = false;
         lastRoll = 0;
@@ -344,7 +322,6 @@ public class GameScreen extends JFrame {
         setStatus("Rolled 6!<br>Roll again!");
     }
  
-    // ── Next player's turn ────────────────────────────────────────────────
     private void nextTurn() {
         clearHighlights();
         diceRolled = false;
@@ -355,7 +332,6 @@ public class GameScreen extends JFrame {
         refreshTurnUI();
     }
  
-    // ── Check if current player won ───────────────────────────────────────
     private void checkWinner() {
         Player current = players.get(currentPlayerIndex);
         boolean won = pawns.stream()
@@ -369,7 +345,6 @@ public class GameScreen extends JFrame {
         }
     }
  
-    // ── Helpers ───────────────────────────────────────────────────────────
     private void clearHighlights() {
         for (Pawn p : pawns) board.highlightCell(p.getRow(), p.getCol(), false);
     }
