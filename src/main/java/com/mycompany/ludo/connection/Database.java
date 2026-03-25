@@ -9,6 +9,7 @@ package com.mycompany.ludo.connection;
  * @author Haidar
  */
 public class Database {
+
     private String userName = "postgres";
     private String passWord = "postgres2505";
     private String connectionUrl = "jdbc:postgresql://localhost:5432/Ludo";
