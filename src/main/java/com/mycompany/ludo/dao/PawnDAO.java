@@ -58,8 +58,8 @@ public class PawnDAO {
         }
         return null;
     }
-    
-    public List<Pawn> getAllPawn(int playerId) throws SQLException {
+
+    public List<Pawn> getAllPlayerPawns(int playerId) throws SQLException {
         String sql = "SELECT * FROM public.pawn WHERE playerid = ?;";
         List<Pawn> playerPawns = new ArrayList<>();
         try {
@@ -82,4 +82,87 @@ public class PawnDAO {
         }
     }
     
+    public Pawn checkEnemyPawnCapture(int position, int playerId) throws SQLException {
+        String sql = "SELECT pawn.* FROM public.pawn AS pawn JOIN public.player AS player ON pawn.playerid = player.playerid WHERE pawn.position = ? AND player.playerid != ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, position);
+            stmt.setInt(2, playerId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                Pawn pawn = new Pawn();
+                pawn.setPawnId(rs.getInt("pawnid"));
+                pawn.setPlayerId(rs.getInt("playerid"));
+                pawn.setPosition(rs.getInt("position"));
+                pawn.setHomePosition(rs.getInt("homeposition"));
+                pawn.setIsHome(rs.getBoolean("ishome"));
+                pawn.setIsFinished(rs.getBoolean("isfinished"));
+                return pawn;
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return null;
+    }
+
+    public void movePawn(int pawnId, int position) throws SQLException {
+        String sql = "UPDATE public.pawn SET position = ?, isHome = FALSE WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, position);
+            stmt.setInt(2, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    public void enterHomePath(int pawnId, int homePosition) throws SQLException {
+        String sql = "UPDATE public.pawn SET position = NULL, homePosition = ? WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, homePosition);
+            stmt.setInt(2, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    public void capturedPawn(int pawnId) throws SQLException {
+        String sql = "UPDATE public.pawn SET position = NULL, isHome = TRUE WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt =conn.prepareStatement(sql);
+            stmt.setInt(1, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    public void finishPawn(int pawnId) throws SQLException {
+        String sql = "UPDATE public.pawn SET homePosition = NULL, isFinished = TRUE WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    public int checkFinishedPawns(int playerId) throws SQLException {
+        String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isFinished = TRUE;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, playerId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return 0;
+    }
 }
