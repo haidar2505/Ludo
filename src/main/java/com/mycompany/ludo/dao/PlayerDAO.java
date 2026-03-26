@@ -56,6 +56,7 @@ public class PlayerDAO {
                 player.setName(rs.getString("name"));
                 player.setColor(PlayerColor.valueOf(rs.getString("color")));
                 player.setIsWinner(rs.getBoolean("iswinner"));
+                allPlayers.add(player);
             }
             return allPlayers;
         } catch (SQLException e) {
