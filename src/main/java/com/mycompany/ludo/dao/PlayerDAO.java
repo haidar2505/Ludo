@@ -86,7 +86,7 @@ public class PlayerDAO {
     }
 
     public Player getNextPlayer(int gameId, int playerId) throws SQLException {
-        List<Player> allPlayers = getAllPlayers(playerId);
+        List<Player> allPlayers = getAllPlayers(gameId);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (allPlayers.get(i).getPlayerId() == playerId) {

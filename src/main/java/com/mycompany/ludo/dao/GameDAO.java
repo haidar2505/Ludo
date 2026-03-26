@@ -71,7 +71,7 @@ public class GameDAO {
         }
     }
     
-    public void nextPlayer(int gameId, int playerId) throws SQLException {
+    public void updateCurrentPlayer(int gameId, int playerId) throws SQLException {
         String sql = "UPDATE public.game SET currentplayerid = ? WHERE gameid = ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
