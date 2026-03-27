@@ -141,6 +141,30 @@ public class PawnDAO {
         }
         return null;
     }
+    
+        public Pawn checkPlayerPawnPosition(int position, int playerId, int pawnId) throws SQLException {
+        String sql = "SELECT pawn.* FROM public.pawn AS pawn JOIN public.player AS player ON pawn.playerid = player.playerid WHERE pawn.position = ? AND player.playerid == ? AND pawn.pawnid != ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, position);
+            stmt.setInt(2, playerId);
+            stmt.setInt(3, pawnId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                Pawn pawn = new Pawn();
+                pawn.setPawnId(rs.getInt("pawnid"));
+                pawn.setPlayerId(rs.getInt("playerid"));
+                pawn.setPosition(rs.getInt("position"));
+                pawn.setHomePosition(rs.getInt("homeposition"));
+                pawn.setIsHome(rs.getBoolean("ishome"));
+                pawn.setIsFinished(rs.getBoolean("isfinished"));
+                return pawn;
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return null;
+    }
 
     public void movePawn(int pawnId, int position) throws SQLException {
         String sql = "UPDATE public.pawn SET position = ?, isHome = FALSE WHERE pawnid = ?;";
@@ -170,6 +194,17 @@ public class PawnDAO {
         String sql = "UPDATE public.pawn SET position = NULL, isHome = TRUE WHERE pawnid = ?;";
         try {
             PreparedStatement stmt =conn.prepareStatement(sql);
+            stmt.setInt(1, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    public void movePawnToFinish(int pawnId) throws SQLException {
+        String sql = "UPDATE public.pawn SET homePosition = 5, isFinished = FALSE WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, pawnId);
             stmt.executeUpdate();
         } catch (SQLException e) {
