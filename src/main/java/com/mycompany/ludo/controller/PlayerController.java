@@ -61,26 +61,28 @@ public class PlayerController {
         gameController.updateCurrentPlayer(gameId, nextPlayerId);
     }
 
-    public void playerPlay(int playerId) throws SQLException {
+    public void playerRoll(int playerId, int pawnId) throws SQLException {
         Player player = playerDAO.getPlayer(playerId);
         int gameId = player.getGameId();
         PlayerColor color = player.getColor();
         int diceValue = diceController.rollDice();
+        boolean playAgain = false;
 
         if (pawnController.checkAllHomePawns(playerId)) {
             if (diceValue == 6) {
-                pawnController.movePawnAuto(playerId, color, diceValue);
-                playerPlay(playerId);
+                playAgain = pawnController.movePawnAuto(playerId, gameId, color, diceValue);
             } else {
                 nextTurn(gameId, playerId);
             }
         } else if (pawnController.countPawnOnBoard(playerId) == 1) {
-            pawnController.movePawnAuto(playerId, color, diceValue);
-            nextTurn(gameId, playerId);
+            playAgain = pawnController.movePawnAuto(playerId, gameId, color, diceValue);
         } else {
-            pawnController.selectPawnMove(playerId, gameId, color, diceValue);
+            playAgain = pawnController.selectPawnMove(playerId, gameId, pawnId, color, diceValue);
         }
-
+        
+        if(playAgain) {
+            playerPlay(playerId, pawnId);
+        }
     }
 
     public void playerWon(int gameId, int playerId) throws SQLException {

@@ -54,26 +54,37 @@ public class PawnController {
     public void checkPawnCapture(int position, int playerId) throws SQLException {
         pawnDAO.checkEnemyPawnCapture(position, playerId);
     }
-                
-    public void movePawnAuto(int playerId, PlayerColor color, int numberRolled) throws SQLException {
+    
+    public boolean movePawnAuto(int playerId, int gameId, PlayerColor color, int numberRolled) throws SQLException {
         if(numberRolled == 6){
             List<Pawn> pawns = pawnDAO.getAllPlayerPawns(playerId);
             pawnDAO.movePawn(pawns.get(0).getPawnId(), pawnEntryPosition(color)); 
+            return true;
         } else {
             Pawn pawn = pawnDAO.onePawnOnBoard(playerId);
             int pawnId = pawn.getPawnId();
             int pawnPosition = (pawn.getPosition() + numberRolled) % 52;
             pawnDAO.movePawn(pawnId, pawnPosition);
+            return false;
         }
     }
     
-    public void selectPawnMove(int playerId, int pawnId, PlayerColor color, int numberRolled) throws SQLException {
+    public boolean selectPawnMove(int playerId, int gameId, int pawnId, PlayerColor color, int numberRolled) throws SQLException {
         Pawn pawn = pawnDAO.getPawn(pawnId);
-        if(pawn.getPosition() == -1){
-            pawnDAO.movePawn(pawnId, pawnEntryPosition(color)); 
+        int pawnPosition = pawn.getPosition();
+        if(numberRolled == 6){
+            if(pawnPosition == -1){
+                pawnDAO.movePawn(pawnId, pawnEntryPosition(color)); 
+            } else {
+                pawnPosition = (pawnPosition + numberRolled) % 52;
+                pawnDAO.movePawn(pawnId, pawnPosition);
+            }
+            return true;
         } else {
-            int pawnPosition = (pawn.getPosition() + numberRolled) % 52;
+            pawnPosition = (pawnPosition + numberRolled) % 52;
             pawnDAO.movePawn(pawnId, pawnPosition);
+            playerController.nextTurn(gameId, playerId);
+            return false;
         }
     }
     
