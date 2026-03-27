@@ -81,7 +81,7 @@ public class PawnController {
         int entryHome = pawnEntryHomePosition(color);
         Pawn pawnSamePosition = pawnDAO.checkPlayerPawnPosition(position, playerId, pawnId);
         
-        if(pawn.isIsHome()){
+        if(pawn.isIsHome() && pawn.isIsFinished()){
             return numberRolled == 6;
         }
         
@@ -147,10 +147,6 @@ public class PawnController {
         } else {
             moveAndCapture(pawnId, pawn.getPosition(), playerId, color, numberRolled);
         }
-    }
-    
-    public void finishPawn(int pawnId) throws SQLException {
-        pawnDAO.finishPawn(pawnId);
     }
     
     public boolean checkAllPawnsFinished(int playerId) throws SQLException {
