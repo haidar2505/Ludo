@@ -9,7 +9,6 @@ import com.mycompany.ludo.model.Game;
 import com.mycompany.ludo.model.Player;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +20,7 @@ public class PlayerController {
     private final PlayerDAO playerDAO;
     private GameController gameController;
     private PawnController pawnController;
+    private DiceController diceController;
 
     public PlayerController(Connection conn) {
         this.playerDAO = new PlayerDAO(conn);
@@ -30,14 +30,13 @@ public class PlayerController {
         return 2;
     }
 
-    public void createPlayer(int gameId, String name, String color) throws SQLException {
+    public void createPlayer(int gameId, String[] name, String[] color) throws SQLException {
         Game verifyGame = gameController.findGame(gameId);
         if (verifyGame == null) {
             throw new RuntimeException("Error");
         }
-        int numberOfPlayers = playersNumber();
-        for(int i = 0; i < numberOfPlayers; i++){
-            int playerId = playerDAO.createPlayer(gameId, name, color);
+        for(int i = 0; i < name.length; i++){
+            int playerId = playerDAO.createPlayer(gameId, name[i], color[i]);
             pawnController.createPawns(playerId);
         }
         List<Player> players = playerDAO.getAllPlayers(gameId);
@@ -57,8 +56,15 @@ public class PlayerController {
         gameController.updateCurrentPlayer(gameId, nextPlayerId);
     }
     
+    public void playerPlay(int playerId) {
+        diceController.rollDice();
+        if(diceController.getDiceValue() == 6){
+            
+        }
+    }
+    
     public void playerWon(int gameId, int playerId) throws SQLException {
-        if(pawnController.checkAllPawnsFinished(playerId) == 1){
+        if(pawnController.checkAllPawnsFinished(playerId)){
             playerDAO.playerWon(gameId, playerId);
             gameController.endGame(gameId);
         }

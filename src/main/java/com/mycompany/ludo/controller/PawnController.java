@@ -44,7 +44,7 @@ public class PawnController {
         pawnDAO.finishPawn(pawnId);
     }
     
-    public int checkAllPawnsFinished(int playerId) throws SQLException {
+    public boolean checkAllPawnsFinished(int playerId) throws SQLException {
         return pawnDAO.checkFinishedPawns(playerId);
     }
 }

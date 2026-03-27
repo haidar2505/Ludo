@@ -151,18 +151,18 @@ public class PawnDAO {
         }
     }
     
-    public int checkFinishedPawns(int playerId) throws SQLException {
+    public boolean checkFinishedPawns(int playerId) throws SQLException {
         String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isFinished = TRUE;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                rs.getInt(1);
+                return true;
             }
         } catch (SQLException e) {
             throw e;
         }
-        return 0;
+        return false;
     }
 }
