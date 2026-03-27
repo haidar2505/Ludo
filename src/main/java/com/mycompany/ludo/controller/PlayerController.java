@@ -85,8 +85,6 @@ public class PlayerController {
         }
     }
 
-
-
     public void playerWon(int gameId, int playerId) throws SQLException {
         if (pawnController.checkAllPawnsFinished(playerId)) {
             playerDAO.playerWon(gameId, playerId);

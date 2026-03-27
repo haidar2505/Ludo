@@ -51,12 +51,15 @@ public class PawnController {
         return pawnDAO.getPawn(pawnId);
     }
     
-    public void checkPawnCapture(int position, int playerId) throws SQLException {
-        pawnDAO.checkEnemyPawnCapture(position, playerId);
+    public void moveAndCapture(int pawnId, int position, int playerId) throws SQLException {
+        Pawn pawnCapture = pawnDAO.checkEnemyPawnCapture(position, playerId);
+        if(pawnCapture != null){
+            pawnDAO.capturedPawn(pawnCapture.getPawnId());
+        }
+        pawnDAO.movePawn(pawnId, position);
     }
-        
+    
     public void movePawnAuto(int playerId, int gameId, PlayerColor color, int numberRolled) throws SQLException {
-        
         if(pawnDAO.checkAllHomePawns(playerId)){
             List<Pawn> pawns = pawnDAO.getAllPlayerPawns(playerId);
             pawnDAO.movePawn(pawns.get(0).getPawnId(), pawnEntryPosition(color)); 
@@ -64,7 +67,7 @@ public class PawnController {
             Pawn pawn = pawnDAO.onePawnOnBoard(playerId);
             int pawnId = pawn.getPawnId();
             int pawnPosition = (pawn.getPosition() + numberRolled) % 52;
-            pawnDAO.movePawn(pawnId, pawnPosition);
+            moveAndCapture(pawnId, pawnPosition, playerId);
         }
     }
     
@@ -77,16 +80,12 @@ public class PawnController {
                 pawnDAO.movePawn(pawnId, pawnEntryPosition(color)); 
             } else {
                 pawnPosition = (pawnPosition + numberRolled) % 52;
-                pawnDAO.movePawn(pawnId, pawnPosition);
+                moveAndCapture(pawnId, pawnPosition, playerId);
             }
         } else {
             pawnPosition = (pawnPosition + numberRolled) % 52;
-            pawnDAO.movePawn(pawnId, pawnPosition);
+            moveAndCapture(pawnId, pawnPosition, playerId);
         }
-    }
-    
-    public void capturePawn(int pawnId) throws SQLException {
-        pawnDAO.capturedPawn(pawnId);
     }
     
     public void enterHomePath(int pawnId, int homePosition) throws SQLException {
