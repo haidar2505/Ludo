@@ -23,17 +23,17 @@ public class PlayerService {
     private DiceService diceService;
     private PawnService pawnService;
 
-    public PlayerService(Connection conn, GameService gameService,  DiceService diceService, PawnService pawnService) {
+    public PlayerService(Connection conn, GameService gameService, DiceService diceService, PawnService pawnService) {
         this.playerDAO = new PlayerDAO(conn);
         this.gameService = gameService;
         this.diceService = diceService;
         this.pawnService = pawnService;
     }
-    
+
     public int createPlayer(int gameId, String name, PlayerColor color) throws SQLException {
         return playerDAO.createPlayer(gameId, name, color);
     }
-        
+
     public List<Player> getAllPlayers(int gameId) throws SQLException {
         return playerDAO.getAllPlayers(gameId);
     }
@@ -41,16 +41,18 @@ public class PlayerService {
     public Player getPlayer(int playerId) throws SQLException {
         return playerDAO.getPlayer(playerId);
     }
-    
+
     public Player getNextPlayer(int gameId, int playerId) throws SQLException {
         return playerDAO.getNextPlayer(gameId, playerId);
     }
-    
-    public void checkPlayerWon(int gameId, int playerId) throws SQLException {
-        if (pawnService.checkAllPawnsFinished(playerId)) {
+
+    public boolean checkPlayerWon(int gameId, int playerId) throws SQLException {
+        if (pawnService.checkFinishedPawns(playerId)) {
             playerDAO.playerWon(gameId, playerId);
             gameService.endGame(gameId);
+            return true;
         }
+        return false;
     }
 
     public void initializePlayer(int gameId, String[] name, PlayerColor[] color) throws SQLException {
@@ -74,22 +76,27 @@ public class PlayerService {
         int nextPlayerId = nextPlayer.getPlayerId();
         gameService.updateCurrentPlayer(gameId, nextPlayerId);
     }
-            
+
     public void playerTurn(int playerId) throws SQLException {
         Player player = getPlayer(playerId);
         int gameId = player.getGameId();
         PlayerColor color = player.getColor();
-        
-        int numberRolled = diceService.rollDice();
-        
-        boolean turnDone = pawnService.handleTurn(gameId, playerId, color, numberRolled);
-        
-        if(turnDone){
-            checkPlayerWon(gameId, playerId);
-            if (numberRolled != 6) {
-                nextTurn(gameId, playerId);
+
+        boolean rolledSix;
+
+        do {
+            int numberRolled = diceService.rollDice();
+            rolledSix = numberRolled == 6;
+            boolean turnDone = pawnService.handleTurn(gameId, playerId, color, numberRolled);
+
+            if (turnDone) {
+                if (checkPlayerWon(gameId, playerId)) {
+                    return;
+                }
             }
-        }
+        } while (rolledSix);
+
+        nextTurn(gameId, playerId);
     }
 
 //    public void selectPawn(int playerId, int pawnId) throws SQLException {
