@@ -45,10 +45,13 @@ public class PlayerService {
     public Player getNextPlayer(int gameId, int playerId) throws SQLException {
         return playerDAO.getNextPlayer(gameId, playerId);
     }
-
-//    public int playersNumber() {
-//        return 2;
-//    }
+    
+    public void checkPlayerWon(int gameId, int playerId) throws SQLException {
+        if (pawnService.checkAllPawnsFinished(playerId)) {
+            playerDAO.playerWon(gameId, playerId);
+            gameService.endGame(gameId);
+        }
+    }
 
     public void initializePlayer(int gameId, String[] name, PlayerColor[] color) throws SQLException {
         Game verifyGame = gameService.findGame(gameId);
@@ -79,7 +82,7 @@ public class PlayerService {
         
         int numberRolled = diceService.rollDice();
         
-        boolean turnDone = pawnService.handleTurn(gameId, playerId, color, numberRolled);
+        boolean turnDone = pawnService.handlePawns(gameId, playerId, color, numberRolled);
         
         if(turnDone){
             checkPlayerWon(gameId, playerId);
@@ -89,13 +92,6 @@ public class PlayerService {
         }
     }
 
-    public void checkPlayerWon(int gameId, int playerId) throws SQLException {
-        if (pawnService.checkAllPawnsFinished(playerId)) {
-            playerDAO.playerWon(gameId, playerId);
-            gameService.endGame(gameId);
-        }
-    }
-    
 //    public void selectPawn(int playerId, int pawnId) throws SQLException {
 //        Player player = getPlayer(playerId);
 //        int gameId = player.getGameId();

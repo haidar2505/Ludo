@@ -36,6 +36,29 @@ public class PawnDAO {
             throw e;
         }
     }
+    
+    public List<Pawn> getAllPlayerPawns(int playerId) throws SQLException {
+        String sql = "SELECT * FROM public.pawn WHERE playerid = ?;";
+        List<Pawn> playerPawns = new ArrayList<>();
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, playerId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Pawn pawn = new Pawn();
+                pawn.setPawnId(rs.getInt("pawnid"));
+                pawn.setPlayerId(rs.getInt("playerid"));
+                pawn.setPosition(rs.getInt("position"));
+                pawn.setHomePosition(rs.getInt("homeposition"));
+                pawn.setIsHome(rs.getBoolean("ishome"));
+                pawn.setIsFinished(rs.getBoolean("isfinished"));
+                playerPawns.add(pawn);
+            }
+            return playerPawns;
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
 
     public Pawn getPawn(int pawnId) throws SQLException {
         String sql = "SELECT * FROM public.pawn WHERE pawnid = ?;";
@@ -58,28 +81,20 @@ public class PawnDAO {
         }
         return null;
     }
-
-    public List<Pawn> getAllPlayerPawns(int playerId) throws SQLException {
-        String sql = "SELECT * FROM public.pawn WHERE playerid = ?;";
-        List<Pawn> playerPawns = new ArrayList<>();
+    
+    public boolean checkAllHomePawns(int playerId) throws SQLException {
+        String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isHome = TRUE;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Pawn pawn = new Pawn();
-                pawn.setPawnId(rs.getInt("pawnid"));
-                pawn.setPlayerId(rs.getInt("playerid"));
-                pawn.setPosition(rs.getInt("position"));
-                pawn.setHomePosition(rs.getInt("homeposition"));
-                pawn.setIsHome(rs.getBoolean("ishome"));
-                pawn.setIsFinished(rs.getBoolean("isfinished"));
-                playerPawns.add(pawn);
+            if(rs.next()){
+                return rs.getInt(1) > 0;
             }
-            return playerPawns;
         } catch (SQLException e) {
             throw e;
         }
+        return false;
     }
     
     public Pawn onePawnOnBoard(int playerId) throws SQLException {
@@ -212,20 +227,7 @@ public class PawnDAO {
         }
     }
     
-    public boolean checkAllHomePawns(int playerId) throws SQLException {
-        String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isHome = TRUE;";
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, playerId);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
-                return true;
-            }
-        } catch (SQLException e) {
-            throw e;
-        }
-        return false;
-    }
+
     
     public boolean checkFinishedPawns(int playerId) throws SQLException {
         String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isFinished = FALSE;";
