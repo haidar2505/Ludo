@@ -74,27 +74,31 @@ public class PawnService {
     public boolean checkAllHomePawns(int playerId) throws SQLException {
         return pawnDAO.checkAllHomePawns(playerId);
     }
-
+    
+    public Pawn checkEnemyPawnPosition(int playerId, int position) throws SQLException {
+        return pawnDAO.checkEnemyPawnPosition(playerId, position);
+    }
+    
+    public Pawn checkPlayerPawnPosition(int playerId, int pawnId, int position) throws SQLException {
+        return pawnDAO.checkPlayerPawnPosition(playerId, pawnId, position);
+    }
+    
     public void movePawn(int pawnId, int position) throws SQLException {
         pawnDAO.movePawn(pawnId, position);
+    }
+    
+    public void captureEnemyPawn(int pawnId) throws SQLException {
+        pawnDAO.captureEnemyPawn(pawnId);
+    }
+    
+    public void enterHomePath(int pawnId, int homePosition) throws SQLException {
+        pawnDAO.enterHomePath(pawnId, homePosition);
     }
 
     public void finishPawn(int pawnId) throws SQLException {
         pawnDAO.finishPawn(pawnId);
     }
-
-    public void enterHomePath(int pawnId, int homePosition) throws SQLException {
-        pawnDAO.enterHomePath(pawnId, homePosition);
-    }
-
-    public Pawn checkEnemyPawnPosition(int playerId, int position) throws SQLException {
-        return pawnDAO.checkEnemyPawnPosition(playerId, position);
-    }
-
-    public void captureEnemyPawn(int pawnId) throws SQLException {
-        pawnDAO.captureEnemyPawn(pawnId);
-    }
-
+    
     public boolean checkFinishedPawns(int playerId) throws SQLException {
         return pawnDAO.checkFinishedPawns(playerId);
     }
@@ -156,7 +160,7 @@ public class PawnService {
         }
 
         int newPosition = (currentPosition + numberRolled) % 52;
-        Pawn pawnSamePosition = pawnDAO.checkPlayerPawnPosition(newPosition, playerId, pawnId);
+        Pawn pawnSamePosition = checkPlayerPawnPosition(playerId, pawnId, newPosition);
         if (pawnSamePosition != null) {
             return false;
         }

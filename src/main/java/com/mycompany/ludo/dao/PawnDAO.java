@@ -97,21 +97,6 @@ public class PawnDAO {
         return false;
     }
     
-    public int countPawnOnBoard(int playerId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM public.pawn WHERE ishome = FALSE AND isfinished = FALSE AND playerid = ?;";
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, playerId);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw e;
-        }
-        return 0;
-    }
-    
     public Pawn checkEnemyPawnPosition(int playerId, int position) throws SQLException {
         String sql = "SELECT pawn.* FROM public.pawn AS pawn JOIN public.player AS player ON pawn.playerid = player.playerid WHERE pawn.position = ? AND player.playerid != ?;";
         try {
@@ -171,6 +156,17 @@ public class PawnDAO {
         }
     }
     
+    public void captureEnemyPawn(int pawnId) throws SQLException {
+        String sql = "UPDATE public.pawn SET position = NULL, ishome = TRUE WHERE pawnid = ?;";
+        try {
+            PreparedStatement stmt =conn.prepareStatement(sql);
+            stmt.setInt(1, pawnId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
     public void enterHomePath(int pawnId, int homePosition) throws SQLException {
         String sql = "UPDATE public.pawn SET position = NULL, homeposition = ? WHERE pawnid = ?;";
         try {
@@ -182,18 +178,7 @@ public class PawnDAO {
             throw e;
         }
     }
-    
-    public void captureEnemyPawn(int pawnId) throws SQLException {
-        String sql = "UPDATE public.pawn SET position = NULL, ishome = TRUE WHERE pawnid = ?;";
-        try {
-            PreparedStatement stmt =conn.prepareStatement(sql);
-            stmt.setInt(1, pawnId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        }
-    }
-       
+        
     public void finishPawn(int pawnId) throws SQLException {
         String sql = "UPDATE public.pawn SET homeposition = 5, isfinished = TRUE WHERE pawnid = ?;";
         try {

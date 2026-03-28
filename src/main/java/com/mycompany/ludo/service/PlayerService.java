@@ -98,22 +98,4 @@ public class PlayerService {
 
         nextTurn(gameId, playerId);
     }
-
-//    public void selectPawn(int playerId, int pawnId) throws SQLException {
-//        Player player = getPlayer(playerId);
-//        int gameId = player.getGameId();
-//        PlayerColor color = player.getColor();
-//        
-//        int numberRolled = diceController.getNumberRolled();
-//        
-//        List<Integer> validPawns = pawnController.getCurrentValidPawns();
-//        if(!validPawns.contains(pawnId)) {
-//            throw new RuntimeException("Invalid pawn selected!");
-//        }
-//        pawnController.selectedPawnMove(playerId, pawnId, color, numberRolled);
-//        checkPlayerWon(gameId, playerId);
-//        if (numberRolled != 6) {
-//            nextTurn(gameId, playerId);
-//        }
-//    }
 }
