@@ -134,7 +134,7 @@ public class PawnDAO {
         return 0;
     }
     
-    public Pawn checkEnemyPawnCapture(int position, int playerId) throws SQLException {
+    public Pawn checkEnemyPawnPosition(int playerId, int position) throws SQLException {
         String sql = "SELECT pawn.* FROM public.pawn AS pawn JOIN public.player AS player ON pawn.playerid = player.playerid WHERE pawn.position = ? AND player.playerid != ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -205,7 +205,7 @@ public class PawnDAO {
         }
     }
     
-    public void capturedPawn(int pawnId) throws SQLException {
+    public void captureEnemyPawn(int pawnId) throws SQLException {
         String sql = "UPDATE public.pawn SET position = NULL, ishome = TRUE WHERE pawnid = ?;";
         try {
             PreparedStatement stmt =conn.prepareStatement(sql);

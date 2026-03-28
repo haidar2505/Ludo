@@ -87,16 +87,38 @@ public class PawnService {
         return pawnDAO.countPawnOnBoard(playerId);
     }
 
-    public Pawn checkEnemyPawn(int position, int playerId) throws SQLException {
-        return pawnDAO.checkEnemyPawnCapture(position, playerId);
+    public Pawn checkEnemyPawnPosition(int playerId, int position) throws SQLException {
+        return pawnDAO.checkEnemyPawnPosition(playerId, position);
     }
 
-    public void capturePawn(int pawnId) throws SQLException {
-        pawnDAO.capturedPawn(pawnId);
+    public void captureEnemyPawn(int pawnId) throws SQLException {
+        pawnDAO.captureEnemyPawn(pawnId);
+    }
+    
+    public void checkCapture(int playerId, int enemyPosition) throws SQLException {
+        Pawn enemyPawn = checkEnemyPawnPosition(playerId, enemyPosition);
+        if(enemyPawn != null) {
+            captureEnemyPawn(enemyPawn.getPawnId());
+        }
     }
 
     public boolean checkAllPawnsFinished(int playerId) throws SQLException {
         return pawnDAO.checkFinishedPawns(playerId);
+    }
+    
+    public boolean isEntringHomePath(Integer currentPosition, int numberRolled, int entryHomePosition) {
+        if (currentPosition == null) {
+            return false;
+        }
+        return currentPosition < entryHomePosition && (currentPosition + numberRolled) >= entryHomePosition;
+    }
+    
+    public void handleHomePath(int pawnId, int currentPosition, int numberRolled, int entryHomePosition) throws SQLException {
+        int homePosition = (currentPosition + numberRolled) - entryHomePosition;
+        if(homePosition == 5) {
+            finishPawn(pawnId);
+        }
+        enterHomePath(pawnId, homePosition);
     }
 
     public List<Integer> getCurrentValidPawns() {
@@ -148,108 +170,50 @@ public class PawnService {
         return true;
     }
 
-    public boolean handlePawns(int gameId, int playerId, PlayerColor color, int numberRolled) throws SQLException {
-
+    public boolean handleTurn(int gameId, int playerId, PlayerColor color, int numberRolled) throws SQLException {
         validPawnId = validPawnToMove(playerId, color, numberRolled);
 
         if (validPawnId.isEmpty()) {
             return false;
-        }
-
-        if (!validPawnId.isEmpty()) {
-
+        } else {
             if (checkAllHomePawns(playerId) || validPawnId.size() == 1) {
-                autoMove(playerId, color, validPawnId.get(0), numberRolled);
+                handleMovePawn(playerId, color, validPawnId.get(0), numberRolled);
+            } else {
+                // Player choses a pawn to move
             }
-//            movePawnAuto(validPawnId.get(0), playerId, color, numberRolled);
             return true;
         }
-        return false;
-    }
-
-    public void autoMove(int playerId, PlayerColor color, int pawnId, int numberRolled) throws SQLException {
-        int entryPosition = pawnEntryBoardPosition(color);
-        int entryHomePosition = pawnEntryHomePosition(color);
-        if (numberRolled == 6) {
-            movePawn(pawnId, entryPosition);
-        } else {
-            Pawn pawn = getPawn(pawnId);
-            int currentPosition = pawn.getPosition();
-            int newPosition = (currentPosition + numberRolled) % 52;
-
-            if (isEntringHomePath(currentPosition, numberRolled, entryHomePosition)) {
-                handleHomePath(pawnId, currentPosition, numberRolled, entryHomePosition);
-            }
-
-        }
-    }
-
-    public boolean isEntringHomePath(Integer currentPosition, int numberRolled, int entryHomePosition) {
-        if (currentPosition == null) {
-            return false;
-        }
-        return currentPosition < entryHomePosition && (currentPosition + numberRolled) >= entryHomePosition;
     }
     
-    public void handleHomePath(int pawnId, int currentPosition, int numberRolled, int entryHomePosition) throws SQLException {
-        int homePosition = (currentPosition + numberRolled) - entryHomePosition;
-        if(homePosition == 5) {
-            finishPawn(pawnId);
+    public void handleMovePawn(int playerId, PlayerColor color, int pawnId, int numberRolled) throws SQLException {
+        Pawn pawn = getPawn(pawnId);
+        Integer currentPosition = pawn.getPosition();
+        
+        if(currentPosition == null) {
+            movePawnFromHome(playerId, color, pawnId);
+        } else {
+            movePawnBoard(playerId, color, pawnId, numberRolled); 
         }
-        enterHomePath(pawnId, homePosition);
     }
-
-//    public void processMovePawn(int pawnId, int position, int playerId, PlayerColor color, int numberRolled) throws SQLException {
-//
-//        int entryHome = pawnEntryHomePosition(color);
-//
-//        if (passedHomePath(position, entryHome, numberRolled)) {
-//            int homePosition = (position + numberRolled) - entryHome;
-//            if (homePosition == 5) {
-//                pawnDAO.finishPawn(pawnId);
-//            } else {
-//                pawnDAO.enterHomePath(pawnId, homePosition);
-//            }
-//        } else {
-//            int pawnPosition = (position + numberRolled) % 52;
-//            Pawn enemyPawnCapture = pawnDAO.checkEnemyPawnCapture(pawnPosition, playerId);
-//            if (enemyPawnCapture != null) {
-//                pawnDAO.capturedPawn(enemyPawnCapture.getPawnId());
-//            }
-//            pawnDAO.movePawn(pawnId, pawnPosition);
-//        }
-//    }
-//
-//    public void movePawnAuto(int pawnId, int playerId, PlayerColor color, int numberRolled) throws SQLException {
-//        Pawn pawn = getPawn(pawnId);
-//        Integer position = pawn.getPosition();
-//        
-//        if(position == null){
-//            int entryBoardPosition = pawnEntryBoardPosition(color);
-//            Pawn enemyPawnCapture = checkEnemyPawn(entryBoardPosition, playerId);
-//            if(enemyPawnCapture != null) {
-//                capturePawn(enemyPawnCapture.getPawnId());
-//            }
-//            movePawn(pawnId, entryBoardPosition);
-//        } else {
-//            processMovePawn(pawnId, position, playerId, color, numberRolled);
-//        }
-//    }
-//
-//    public void selectedPawnMove(int playerId, int pawnId, PlayerColor color, int numberRolled) throws SQLException {
-//        Pawn pawn = pawnDAO.getPawn(pawnId);
-//        Integer position = pawn.getPosition();
-//        
-//        if (position == null) {
-//            int entryPosition = pawnEntryBoardPosition(color);
-//            Pawn enemyPawnCapture = pawnDAO.checkEnemyPawnCapture(entryPosition, playerId);
-//            if (enemyPawnCapture != null) {
-//                pawnDAO.capturedPawn(enemyPawnCapture.getPawnId());
-//            }
-//            pawnDAO.movePawn(pawnId, entryPosition);
-//
-//        } else {
-//            processMovePawn(pawnId, position, playerId, color, numberRolled);
-//        }
-//    }
+    
+    public void movePawnFromHome(int playerId, PlayerColor color, int pawnId) throws SQLException {
+        int entryPosition = pawnEntryBoardPosition(color);
+        checkCapture(playerId, entryPosition);
+        movePawn(pawnId, entryPosition);
+    }
+    
+    public void movePawnBoard(int playerId, PlayerColor color, int pawnId, int numberRolled) throws SQLException {
+        int entryHomePosition = pawnEntryHomePosition(color);
+        
+        Pawn pawn = getPawn(pawnId);
+        int currentPosition = pawn.getPosition();
+        int newPosition = (currentPosition + numberRolled) % 52;
+        
+        if (isEntringHomePath(currentPosition, numberRolled, entryHomePosition)) {
+            handleHomePath(pawnId, currentPosition, numberRolled, entryHomePosition);
+        } else {
+            checkCapture(playerId, newPosition);
+            movePawn(pawnId, newPosition);
+        }
+    }
 }

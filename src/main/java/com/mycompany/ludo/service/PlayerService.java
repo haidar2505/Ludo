@@ -82,7 +82,7 @@ public class PlayerService {
         
         int numberRolled = diceService.rollDice();
         
-        boolean turnDone = pawnService.handlePawns(gameId, playerId, color, numberRolled);
+        boolean turnDone = pawnService.handleTurn(gameId, playerId, color, numberRolled);
         
         if(turnDone){
             checkPlayerWon(gameId, playerId);
