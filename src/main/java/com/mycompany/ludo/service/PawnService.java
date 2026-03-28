@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.ludo.controller;
+package com.mycompany.ludo.service;
 
 import com.mycompany.ludo.dao.PawnDAO;
 import com.mycompany.ludo.model.Pawn;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Haidar
  */
-public class PawnController {
+public class PawnService {
 
     private final PawnDAO pawnDAO;
     private List<Integer> validPawnId = new ArrayList<>();
@@ -50,7 +50,7 @@ public class PawnController {
         }
     }
 
-    public PawnController(Connection conn) {
+    public PawnService(Connection conn) {
         this.pawnDAO = new PawnDAO(conn);
     }
 

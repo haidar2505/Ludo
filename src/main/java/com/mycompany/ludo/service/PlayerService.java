@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.ludo.controller;
+package com.mycompany.ludo.service;
 
 import com.mycompany.ludo.dao.PlayerDAO;
 import com.mycompany.ludo.model.Game;
@@ -16,14 +16,14 @@ import java.util.List;
  *
  * @author Haidar
  */
-public class PlayerController {
+public class PlayerService {
 
     private final PlayerDAO playerDAO;
-    private GameController gameController;
-    private DiceController diceController;
-    private PawnController pawnController;
+    private GameService gameController;
+    private DiceService diceController;
+    private PawnService pawnController;
 
-    public PlayerController(Connection conn, GameController gameController,  DiceController diceController, PawnController pawnController) {
+    public PlayerService(Connection conn, GameService gameController,  DiceService diceController, PawnService pawnController) {
         this.playerDAO = new PlayerDAO(conn);
         this.gameController = gameController;
         this.diceController = diceController;
@@ -36,6 +36,10 @@ public class PlayerController {
 
     public Player getPlayer(int playerId) throws SQLException {
         return playerDAO.getPlayer(playerId);
+    }
+    
+    public void createPlayer() throws SQLException {
+        
     }
 
 //    public int playersNumber() {

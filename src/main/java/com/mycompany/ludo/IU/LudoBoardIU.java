@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.ludo.controller;
+package com.mycompany.ludo.IU;
 
 /**
  *
  * @author Haidar
  */
-public class PlayerCounterIU {
-
+public class LudoBoardIU {
+    
 }

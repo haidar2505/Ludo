@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.ludo.controller;
+package com.mycompany.ludo.service;
 
 import com.mycompany.ludo.dao.GameDAO;
 import com.mycompany.ludo.model.Game;
@@ -13,11 +13,11 @@ import java.sql.SQLException;
  *
  * @author Haidar
  */
-public class GameController {
+public class GameService {
     
     private final GameDAO gameDAO;
     
-    public GameController(Connection conn) {
+    public GameService(Connection conn) {
         this.gameDAO = new GameDAO(conn);
     }
     
