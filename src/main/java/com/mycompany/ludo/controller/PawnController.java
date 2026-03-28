@@ -78,7 +78,10 @@ public class PawnController {
         return pawnDAO.checkEnemyPawnCapture(position, playerId);
     }
     
-    public boolean passedHomePath(int currentPosition, int enterHomePosition, int numberRolled) {
+    public boolean passedHomePath(Integer currentPosition, int enterHomePosition, int numberRolled) {
+        if (currentPosition == null) {
+            return false;
+        }
         return currentPosition < enterHomePosition && (currentPosition + numberRolled) >= enterHomePosition;
     }
     
@@ -108,10 +111,7 @@ public class PawnController {
         if(validPawnId.size() == 1){
             movePawnAuto(validPawnId.get(0), playerId, color, numberRolled);
             return true;
-        } else {
-          
-        }
-        
+        }        
         return false;
     }
 
@@ -199,9 +199,9 @@ public class PawnController {
 
     public void selectedPawnMove(int playerId, int pawnId, PlayerColor color, int numberRolled) throws SQLException {
         Pawn pawn = pawnDAO.getPawn(pawnId);
-        Integer pawnPosition = pawn.getPosition();
-
-        if (numberRolled == 6 && pawnPosition == null) {
+        Integer position = pawn.getPosition();
+        
+        if (position == null) {
             int entryPosition = pawnEntryBoardPosition(color);
             Pawn enemyPawnCapture = pawnDAO.checkEnemyPawnCapture(entryPosition, playerId);
             if (enemyPawnCapture != null) {
@@ -210,7 +210,7 @@ public class PawnController {
             pawnDAO.movePawn(pawnId, entryPosition);
 
         } else {
-            processMovePawn(pawnId, pawnPosition, playerId, color, numberRolled);
+            processMovePawn(pawnId, position, playerId, color, numberRolled);
         }
     }
 }

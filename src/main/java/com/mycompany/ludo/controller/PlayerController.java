@@ -20,11 +20,14 @@ public class PlayerController {
 
     private final PlayerDAO playerDAO;
     private GameController gameController;
-    private PawnController pawnController;
     private DiceController diceController;
+    private PawnController pawnController;
 
-    public PlayerController(Connection conn) {
+    public PlayerController(Connection conn, GameController gameController,  DiceController diceController, PawnController pawnController) {
         this.playerDAO = new PlayerDAO(conn);
+        this.gameController = gameController;
+        this.diceController = diceController;
+        this.pawnController = pawnController;
     }
     
     public List<Player> getAllPlayers(int gameId) throws SQLException {
@@ -35,9 +38,9 @@ public class PlayerController {
         return playerDAO.getPlayer(playerId);
     }
 
-    public int playersNumber() {
-        return 2;
-    }
+//    public int playersNumber() {
+//        return 2;
+//    }
 
     public void createPlayer(int gameId, String[] name, String[] color) throws SQLException {
         Game verifyGame = gameController.findGame(gameId);
@@ -72,9 +75,7 @@ public class PlayerController {
         
         if(turnDone){
             checkPlayerWon(gameId, playerId);
-            if (numberRolled == 6) {
-                playerTurn(playerId);
-            } else {
+            if (numberRolled != 6) {
                 nextTurn(gameId, playerId);
             }
         }
@@ -100,9 +101,7 @@ public class PlayerController {
         }
         pawnController.selectedPawnMove(playerId, pawnId, color, numberRolled);
         checkPlayerWon(gameId, playerId);
-        if (numberRolled == 6) {
-            playerTurn(playerId);
-        } else {
+        if (numberRolled != 6) {
             nextTurn(gameId, playerId);
         }
     }
