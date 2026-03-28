@@ -25,13 +25,13 @@ public class PlayerDAO {
         this.conn = conn;
     }
 
-    public int createPlayer(int gameId, String name, String color) throws SQLException {
+    public int createPlayer(int gameId, String name, PlayerColor color) throws SQLException {
         String sql = "INSERT INTO public.player (gameid, name, color) VALUES (?, ?, CAST(? AS player_color) RETURNING playerid);";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, gameId);
             stmt.setString(2, name);
-            stmt.setString(3, color);
+            stmt.setString(3, color.name());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("playerid");

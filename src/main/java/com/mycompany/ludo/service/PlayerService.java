@@ -19,17 +19,21 @@ import java.util.List;
 public class PlayerService {
 
     private final PlayerDAO playerDAO;
-    private GameService gameController;
-    private DiceService diceController;
-    private PawnService pawnController;
+    private GameService gameService;
+    private DiceService diceService;
+    private PawnService pawnService;
 
-    public PlayerService(Connection conn, GameService gameController,  DiceService diceController, PawnService pawnController) {
+    public PlayerService(Connection conn, GameService gameService,  DiceService diceService, PawnService pawnService) {
         this.playerDAO = new PlayerDAO(conn);
-        this.gameController = gameController;
-        this.diceController = diceController;
-        this.pawnController = pawnController;
+        this.gameService = gameService;
+        this.diceService = diceService;
+        this.pawnService = pawnService;
     }
     
+    public int createPlayer(int gameId, String name, PlayerColor color) throws SQLException {
+        return playerDAO.createPlayer(gameId, name, color);
+    }
+        
     public List<Player> getAllPlayers(int gameId) throws SQLException {
         return playerDAO.getAllPlayers(gameId);
     }
@@ -38,34 +42,34 @@ public class PlayerService {
         return playerDAO.getPlayer(playerId);
     }
     
-    public void createPlayer() throws SQLException {
-        
+    public Player getNextPlayer(int gameId, int playerId) throws SQLException {
+        return playerDAO.getNextPlayer(gameId, playerId);
     }
 
 //    public int playersNumber() {
 //        return 2;
 //    }
 
-    public void createPlayer(int gameId, String[] name, String[] color) throws SQLException {
-        Game verifyGame = gameController.findGame(gameId);
+    public void initializePlayer(int gameId, String[] name, PlayerColor[] color) throws SQLException {
+        Game verifyGame = gameService.findGame(gameId);
         if (verifyGame == null) {
-            throw new RuntimeException("Error");
+            throw new IllegalArgumentException("Game : " + gameId + " not found");
         }
         for (int i = 0; i < name.length; i++) {
-            int playerId = playerDAO.createPlayer(gameId, name[i], color[i]);
-            pawnController.createPawns(playerId);
+            int playerId = createPlayer(gameId, name[i], color[i]);
+            pawnService.createPawns(playerId);
         }
         List<Player> players = getAllPlayers(gameId);
-        gameController.startGame(gameId, players.get(0).getPlayerId());
+        gameService.startGame(gameId, players.get(0).getPlayerId());
     }
 
     public void nextTurn(int gameId, int playerId) throws SQLException {
-        Player nextPlayer = playerDAO.getNextPlayer(gameId, playerId);
+        Player nextPlayer = getNextPlayer(gameId, playerId);
         if (nextPlayer == null) {
-            throw new RuntimeException("Error");
+            throw new IllegalArgumentException("Next Player not found");
         }
         int nextPlayerId = nextPlayer.getPlayerId();
-        gameController.updateCurrentPlayer(gameId, nextPlayerId);
+        gameService.updateCurrentPlayer(gameId, nextPlayerId);
     }
             
     public void playerTurn(int playerId) throws SQLException {
@@ -73,9 +77,9 @@ public class PlayerService {
         int gameId = player.getGameId();
         PlayerColor color = player.getColor();
         
-        int numberRolled = diceController.rollDice();
+        int numberRolled = diceService.rollDice();
         
-        boolean turnDone = pawnController.handleTurn(playerId, gameId, color, numberRolled);
+        boolean turnDone = pawnService.handleTurn(gameId, playerId, color, numberRolled);
         
         if(turnDone){
             checkPlayerWon(gameId, playerId);
@@ -86,27 +90,27 @@ public class PlayerService {
     }
 
     public void checkPlayerWon(int gameId, int playerId) throws SQLException {
-        if (pawnController.checkAllPawnsFinished(playerId)) {
+        if (pawnService.checkAllPawnsFinished(playerId)) {
             playerDAO.playerWon(gameId, playerId);
-            gameController.endGame(gameId);
+            gameService.endGame(gameId);
         }
     }
     
-    public void selectPawn(int playerId, int pawnId) throws SQLException {
-        Player player = getPlayer(playerId);
-        int gameId = player.getGameId();
-        PlayerColor color = player.getColor();
-        
-        int numberRolled = diceController.getNumberRolled();
-        
-        List<Integer> validPawns = pawnController.getCurrentValidPawns();
-        if(!validPawns.contains(pawnId)) {
-            throw new RuntimeException("Invalid pawn selected!");
-        }
-        pawnController.selectedPawnMove(playerId, pawnId, color, numberRolled);
-        checkPlayerWon(gameId, playerId);
-        if (numberRolled != 6) {
-            nextTurn(gameId, playerId);
-        }
-    }
+//    public void selectPawn(int playerId, int pawnId) throws SQLException {
+//        Player player = getPlayer(playerId);
+//        int gameId = player.getGameId();
+//        PlayerColor color = player.getColor();
+//        
+//        int numberRolled = diceController.getNumberRolled();
+//        
+//        List<Integer> validPawns = pawnController.getCurrentValidPawns();
+//        if(!validPawns.contains(pawnId)) {
+//            throw new RuntimeException("Invalid pawn selected!");
+//        }
+//        pawnController.selectedPawnMove(playerId, pawnId, color, numberRolled);
+//        checkPlayerWon(gameId, playerId);
+//        if (numberRolled != 6) {
+//            nextTurn(gameId, playerId);
+//        }
+//    }
 }

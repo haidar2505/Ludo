@@ -228,13 +228,14 @@ public class PawnDAO {
     }
     
     public boolean checkFinishedPawns(int playerId) throws SQLException {
-        String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isFinished = TRUE;";
+        String sql = "SELECT COUNT(*) public.pawn WHERE playerid = ? AND isFinished = FALSE;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                return true;
+                // if the rs is 0 it means all pawns has finished
+                return rs.getInt(1) == 0;
             }
         } catch (SQLException e) {
             throw e;
