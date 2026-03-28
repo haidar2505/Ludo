@@ -26,6 +26,14 @@ public class PlayerController {
     public PlayerController(Connection conn) {
         this.playerDAO = new PlayerDAO(conn);
     }
+    
+    public List<Player> getAllPlayers(int gameId) throws SQLException {
+        return playerDAO.getAllPlayers(gameId);
+    }
+
+    public Player getPlayer(int playerId) throws SQLException {
+        return playerDAO.getPlayer(playerId);
+    }
 
     public int playersNumber() {
         return 2;
@@ -40,16 +48,8 @@ public class PlayerController {
             int playerId = playerDAO.createPlayer(gameId, name[i], color[i]);
             pawnController.createPawns(playerId);
         }
-        List<Player> players = playerDAO.getAllPlayers(gameId);
+        List<Player> players = getAllPlayers(gameId);
         gameController.startGame(gameId, players.get(0).getPlayerId());
-    }
-
-    public List<Player> getAllPlayers(int gameId) throws SQLException {
-        return playerDAO.getAllPlayers(gameId);
-    }
-
-    public Player getPlayer(int playerId) throws SQLException {
-        return playerDAO.getPlayer(playerId);
     }
 
     public void nextTurn(int gameId, int playerId) throws SQLException {
@@ -62,32 +62,21 @@ public class PlayerController {
     }
             
     public void playerTurn(int playerId) throws SQLException {
-        
-        Player player = playerDAO.getPlayer(playerId);
+        Player player = getPlayer(playerId);
         int gameId = player.getGameId();
         PlayerColor color = player.getColor();
         
         int numberRolled = diceController.rollDice();
-               
-        if (pawnController.checkAllHomePawns(playerId)) {
+        
+        boolean turnDone = pawnController.handleTurn(playerId, gameId, color, numberRolled);
+        
+        if(turnDone){
+            checkPlayerWon(gameId, playerId);
             if (numberRolled == 6) {
-                pawnController.movePawnAuto(playerId, color, numberRolled);
-                checkPlayerWon(gameId, playerId);
+                playerTurn(playerId);
             } else {
                 nextTurn(gameId, playerId);
             }
-        } else if (pawnController.countPawnOnBoard(playerId) == 1) {
-            pawnController.movePawnAuto(playerId, color, numberRolled);
-            checkPlayerWon(gameId, playerId);
-            if(numberRolled !=6) {
-                nextTurn(gameId, playerId);
-            }
-        } else {
-            List<Integer> validPawns = pawnController.validPawnToMove(playerId, color, numberRolled);
-            if(validPawns.isEmpty()){
-                nextTurn(gameId, playerId);
-            }
-            // SELECT PAWN
         }
     }
 
@@ -95,6 +84,26 @@ public class PlayerController {
         if (pawnController.checkAllPawnsFinished(playerId)) {
             playerDAO.playerWon(gameId, playerId);
             gameController.endGame(gameId);
+        }
+    }
+    
+    public void selectPawn(int playerId, int pawnId) throws SQLException {
+        Player player = getPlayer(playerId);
+        int gameId = player.getGameId();
+        PlayerColor color = player.getColor();
+        
+        int numberRolled = diceController.getNumberRolled();
+        
+        List<Integer> validPawns = pawnController.getCurrentValidPawns();
+        if(!validPawns.contains(pawnId)) {
+            throw new RuntimeException("Invalid pawn selected!");
+        }
+        pawnController.selectedPawnMove(playerId, pawnId, color, numberRolled);
+        checkPlayerWon(gameId, playerId);
+        if (numberRolled == 6) {
+            playerTurn(playerId);
+        } else {
+            nextTurn(gameId, playerId);
         }
     }
 }

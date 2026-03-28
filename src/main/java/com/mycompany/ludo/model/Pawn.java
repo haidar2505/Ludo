@@ -52,7 +52,7 @@ public class Pawn {
         this.homePosition = homePosition;
     }
 
-    public boolean isIsHome() {
+    public boolean getIsHome() {
         return isHome;
     }
 
@@ -60,7 +60,7 @@ public class Pawn {
         this.isHome = isHome;
     }
 
-    public boolean isIsFinished() {
+    public boolean getIsFinished() {
         return isFinished;
     }
 

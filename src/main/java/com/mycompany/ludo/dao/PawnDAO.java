@@ -167,7 +167,7 @@ public class PawnDAO {
     }
 
     public void movePawn(int pawnId, int position) throws SQLException {
-        String sql = "UPDATE public.pawn SET position = ?, isHome = FALSE WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET position = ?, ishome = FALSE WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, position);
@@ -179,7 +179,7 @@ public class PawnDAO {
     }
     
     public void enterHomePath(int pawnId, int homePosition) throws SQLException {
-        String sql = "UPDATE public.pawn SET position = NULL, homePosition = ? WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET position = NULL, homeposition = ? WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, homePosition);
@@ -191,7 +191,7 @@ public class PawnDAO {
     }
     
     public void capturedPawn(int pawnId) throws SQLException {
-        String sql = "UPDATE public.pawn SET position = NULL, isHome = TRUE WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET position = NULL, ishome = TRUE WHERE pawnid = ?;";
         try {
             PreparedStatement stmt =conn.prepareStatement(sql);
             stmt.setInt(1, pawnId);
@@ -200,20 +200,9 @@ public class PawnDAO {
             throw e;
         }
     }
-    
-    public void movePawnToFinish(int pawnId) throws SQLException {
-        String sql = "UPDATE public.pawn SET homePosition = 5, isFinished = FALSE WHERE pawnid = ?;";
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, pawnId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        }
-    }
-    
+       
     public void finishPawn(int pawnId) throws SQLException {
-        String sql = "UPDATE public.pawn SET homePosition = NULL, isFinished = TRUE WHERE pawnid = ?;";
+        String sql = "UPDATE public.pawn SET homeposition = 5, isfinished = TRUE WHERE pawnid = ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, pawnId);

@@ -12,10 +12,17 @@ import java.util.Random;
  */
 public class DiceController {
     
+    private int value;
     Random random = new Random();
 
     public int rollDice() {
-        return random.nextInt(6) + 1;
+        int diceValue = random.nextInt(6) + 1;
+        this.value = diceValue;
+        return diceValue;
+    }
+    
+    public int getNumberRolled(){
+        return value; 
     }
     
 }
