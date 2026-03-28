@@ -142,7 +142,7 @@ public class PawnDAO {
         return null;
     }
     
-        public Pawn checkPlayerPawnPosition(int position, int playerId, int pawnId) throws SQLException {
+    public Pawn checkPlayerPawnPosition(int position, int playerId, int pawnId) throws SQLException {
         String sql = "SELECT pawn.* FROM public.pawn AS pawn JOIN public.player AS player ON pawn.playerid = player.playerid WHERE pawn.position = ? AND player.playerid == ? AND pawn.pawnid != ?;";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);

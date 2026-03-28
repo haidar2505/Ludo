@@ -71,21 +71,27 @@ public class PlayerController {
                
         if (pawnController.checkAllHomePawns(playerId)) {
             if (numberRolled == 6) {
-                pawnController.movePawnAuto(playerId, gameId, color, numberRolled);
+                pawnController.movePawnAuto(playerId, color, numberRolled);
+                checkPlayerWon(gameId, playerId);
             } else {
                 nextTurn(gameId, playerId);
             }
         } else if (pawnController.countPawnOnBoard(playerId) == 1) {
-            pawnController.movePawnAuto(playerId, gameId, color, numberRolled);
+            pawnController.movePawnAuto(playerId, color, numberRolled);
+            checkPlayerWon(gameId, playerId);
             if(numberRolled !=6) {
                 nextTurn(gameId, playerId);
             }
         } else {
+            List<Integer> validPawns = pawnController.validPawnToMove(playerId, color, numberRolled);
+            if(validPawns.isEmpty()){
+                nextTurn(gameId, playerId);
+            }
             // SELECT PAWN
         }
     }
 
-    public void playerWon(int gameId, int playerId) throws SQLException {
+    public void checkPlayerWon(int gameId, int playerId) throws SQLException {
         if (pawnController.checkAllPawnsFinished(playerId)) {
             playerDAO.playerWon(gameId, playerId);
             gameController.endGame(gameId);
