@@ -10,6 +10,7 @@ import com.mycompany.ludo.model.Player;
 import com.mycompany.ludo.model.enums.PlayerColor;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,12 @@ public class PlayerService {
     private GameService gameService;
     private DiceService diceService;
     private PawnService pawnService;
+    private List<Player> numberOfPlayers = new ArrayList<>();
 
+    public List<Player> getPlayers() {
+        return numberOfPlayers;
+    }
+    
     public PlayerService(Connection conn, GameService gameService, DiceService diceService, PawnService pawnService) {
         this.playerDAO = new PlayerDAO(conn);
         this.gameService = gameService;
@@ -55,13 +61,15 @@ public class PlayerService {
         return false;
     }
 
-    public void initializePlayer(int gameId, String[] name, PlayerColor[] color) throws SQLException {
+    public void initializePlayer(int gameId, int numberOfPlayers) throws SQLException {
         Game verifyGame = gameService.findGame(gameId);
+        PlayerColor[] colors = {PlayerColor.RED, PlayerColor.BLUE, PlayerColor.YELLOW, PlayerColor.GREEN};
         if (verifyGame == null) {
             throw new IllegalArgumentException("Game : " + gameId + " not found");
         }
-        for (int i = 0; i < name.length; i++) {
-            int playerId = createPlayer(gameId, name[i], color[i]);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            System.out.println(numberOfPlayers);
+            int playerId = createPlayer(gameId, "Player"+(i+1), colors[i]);
             pawnService.createPawns(playerId);
         }
         List<Player> players = getAllPlayers(gameId);

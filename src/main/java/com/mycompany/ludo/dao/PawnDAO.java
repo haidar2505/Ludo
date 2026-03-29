@@ -30,7 +30,7 @@ public class PawnDAO {
             PreparedStatement stmt = conn.prepareStatement(sql);
             for (int i = 0; i < 4; i++) {
                 stmt.setInt(1, playerId);
-                stmt.executeQuery();
+                stmt.executeUpdate();
             }
         } catch (SQLException e) {
             throw e;

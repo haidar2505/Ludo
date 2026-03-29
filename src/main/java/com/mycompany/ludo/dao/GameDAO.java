@@ -47,8 +47,8 @@ public class GameDAO {
             if (rs.next()) {
                 Game game = new Game();
                 game.setGameId(rs.getInt("gameId"));
-                game.setStartTime(rs.getTimestamp("starttime").toLocalDateTime());
-                game.setEndTime(rs.getTimestamp("endtime").toLocalDateTime());
+                game.setStartTime(rs.getTimestamp("starttime") != null ? rs.getTimestamp("starttime").toLocalDateTime() : null);
+                game.setEndTime(rs.getTimestamp("endtime") != null ? rs.getTimestamp("endtime").toLocalDateTime() : null);
                 game.setCurrentPlayerId(rs.getInt("currentplayerid"));
                 return game;
             }

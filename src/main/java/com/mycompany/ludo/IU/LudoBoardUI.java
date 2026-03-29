@@ -8,6 +8,6 @@ package com.mycompany.ludo.IU;
  *
  * @author Haidar
  */
-public class PlayerCounterIU {
-
+public class LudoBoardUI {
+    
 }
