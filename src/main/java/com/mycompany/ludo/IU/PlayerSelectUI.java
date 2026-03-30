@@ -1,57 +1,44 @@
 package com.mycompany.ludo.IU;
 
-import com.mycompany.ludo.connection.Connectivity;
-import com.mycompany.ludo.service.DiceService;
 import com.mycompany.ludo.service.GameService;
-import com.mycompany.ludo.service.PawnService;
 import com.mycompany.ludo.service.PlayerService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class PlayerSelectUI extends JFrame {
-    
-    private Connection conn;
-    private GameService gameService;
-    private DiceService diceService;
-    private PawnService pawnService;
-    private PlayerService playerService;
 
-    public PlayerSelectUI(Connection conn, GameService gameService, DiceService diceService, PawnService pawnService) {
-        this.conn = conn;
+    private final GameService gameService;
+    private final PlayerService playerService;
+
+    public PlayerSelectUI(GameService gameService, PlayerService playerService) {
         this.gameService = gameService;
-        this.diceService = diceService;
-        this.pawnService = pawnService;
-        this.playerService = new PlayerService(conn, gameService, diceService, pawnService);
+        this.playerService = playerService;
 
         setTitle("Ludo");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setResizable(false);
         setContentPane(new MainPanel());
     }
 
-    // ───────────────── PANEL ─────────────────
     class MainPanel extends JPanel {
 
         Color BG = new Color(18, 15, 40);
         Color CARD = new Color(45, 40, 80);
         Color CARD_HOVER = new Color(65, 60, 110);
 
-        Font titleFont = loadFont(50f, true);
-        Font subtitleFont = loadFont(15f, false);
-        Font textFont = loadFont(17f, false);
-
+        Font titleFont = new Font("SansSerif", Font.BOLD, 50);
+        Font subtitleFont = new Font("SansSerif", Font.PLAIN, 15);
+        Font textFont = new Font("SansSerif", Font.PLAIN, 17);
 
         public MainPanel() {
             setLayout(null);
             setBackground(BG);
 
-            // ── TITLE ──
             JLabel title = new JLabel("LUDO", JLabel.CENTER);
             title.setBounds(0, 40, 1280, 60);
             title.setFont(titleFont);
@@ -70,16 +57,18 @@ public class PlayerSelectUI extends JFrame {
             select.setForeground(new Color(160, 160, 190));
             add(select);
 
-            // ── CARDS ──
             add(buildCard(2, new String[]{"pawn_red.png", "pawn_blue.png"}, 240));
             add(buildCard(3, new String[]{"pawn_red.png", "pawn_blue.png", "pawn_yellow.png"}, 360));
             add(buildCard(4, new String[]{"pawn_red.png", "pawn_blue.png", "pawn_yellow.png", "pawn_green.png"}, 480));
+            
+            add(linedPawns(new String[]{"pawn_red.png", "pawn_blue.png", "pawn_yellow.png", "pawn_green.png"}));
         }
 
-        // ── CARD BUILDER ──
+        // Card
         private JPanel buildCard(int numberOfPlayers, String[] images, int y) {
 
             JPanel card = new JPanel() {
+                @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     Graphics2D g2 = (Graphics2D) g;
@@ -88,24 +77,26 @@ public class PlayerSelectUI extends JFrame {
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
                 }
             };
-            
+
             card.setLayout(null);
             card.setBounds(390, y, 500, 100);
             card.setBackground(CARD);
             card.setOpaque(false);
 
-            // HOVER EFFECT
             card.addMouseListener(new MouseAdapter() {
+                @Override
                 public void mouseEntered(MouseEvent e) {
                     card.setBackground(CARD_HOVER);
                     card.repaint();
                 }
 
+                @Override
                 public void mouseExited(MouseEvent e) {
                     card.setBackground(CARD);
                     card.repaint();
                 }
-                
+
+                @Override
                 public void mousePressed(MouseEvent e) {
                     try {
                         int gameId = gameService.createGame();
@@ -117,7 +108,7 @@ public class PlayerSelectUI extends JFrame {
 
             });
 
-            // Pawn images (BIGGER + CENTERED)
+            // Pawn images
             int totalWidth = images.length * 20;
             int startX = (500 - totalWidth) / 2;
 
@@ -134,7 +125,6 @@ public class PlayerSelectUI extends JFrame {
                 startX += 20;
             }
 
-            // Text
             JLabel label = new JLabel(numberOfPlayers + " Players", JLabel.CENTER);
             label.setBounds(0, 62, 500, 30);
             label.setFont(textFont.deriveFont(Font.BOLD, 20f));
@@ -143,8 +133,45 @@ public class PlayerSelectUI extends JFrame {
 
             return card;
         }
+        
+        public JPanel linedPawns(String[] images) {
+            
+            JPanel card = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(getBackground());
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+                }
+            };
 
-        // ── LOAD IMAGE FROM RESOURCES ──
+            card.setLayout(null);
+            card.setBounds(965, 622, 500, 100);
+            card.setBackground(null);
+            card.setOpaque(false);
+            
+            int totalWidth = images.length * 20;
+            int startX = (500 - totalWidth) / 2;
+
+            for (String img : images) {
+                JLabel pawn = new JLabel();
+                pawn.setBounds(startX, 20, 50, 40);
+
+                ImageIcon icon = loadImage(img);
+                if (icon != null) {
+                    pawn.setIcon(icon);
+                }
+
+                card.add(pawn);
+                startX += 20;
+            }
+            
+            return card;
+        }
+
+        // Load images
         private ImageIcon loadImage(String name) {
             try {
                 ImageIcon icon = new ImageIcon(
@@ -156,35 +183,5 @@ public class PlayerSelectUI extends JFrame {
                 return null;
             }
         }
-
-        // ── LOAD POPPINS ──
-        private Font loadFont(float size, boolean bold) {
-            try {
-                InputStream is = getClass().getResourceAsStream("/fonts/Poppins-Regular.ttf");
-                Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(size);
-                return bold ? font.deriveFont(Font.BOLD) : font;
-            } catch (Exception e) {
-                return new Font("SansSerif", bold ? Font.BOLD : Font.PLAIN, (int) size);
-            }
-        }
-    }
-    
-    private void onPlayerCountSelected(int count) {
-        System.out.println(count + " players");
-    }
-
-    // ───────────────── MAIN ─────────────────
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-        Connection conn = Connectivity.getConnection();
-        if (conn == null) {
-            System.out.println("Could not connect to database.");
-            return;
-        }
-        GameService gameService = new GameService(conn);
-        DiceService diceService = new DiceService();
-        PawnService pawnService = new PawnService(conn);
-        new PlayerSelectUI(conn, gameService, diceService, pawnService).setVisible(true);
-    });
     }
 }

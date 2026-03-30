@@ -20,17 +20,17 @@ import java.util.List;
 public class PlayerService {
 
     private final PlayerDAO playerDAO;
-    private GameService gameService;
-    private DiceService diceService;
-    private PawnService pawnService;
-    private List<Player> numberOfPlayers = new ArrayList<>();
+    private final GameService gameService;
+    private final DiceService diceService;
+    private final PawnService pawnService;
+    private final List<Player> numberOfPlayers = new ArrayList<>();
 
     public List<Player> getPlayers() {
         return numberOfPlayers;
     }
     
-    public PlayerService(Connection conn, GameService gameService, DiceService diceService, PawnService pawnService) {
-        this.playerDAO = new PlayerDAO(conn);
+    public PlayerService(PlayerDAO playerDAO, GameService gameService, DiceService diceService, PawnService pawnService) {
+        this.playerDAO = playerDAO;
         this.gameService = gameService;
         this.diceService = diceService;
         this.pawnService = pawnService;
