@@ -20,6 +20,7 @@ import java.sql.Connection;
 public class Ludo {
 
     public static void main(String[] args) {
+        // Instances
         // Database
         Connection conn = Connectivity.getConnection();
         

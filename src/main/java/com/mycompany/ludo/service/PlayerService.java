@@ -8,7 +8,6 @@ import com.mycompany.ludo.dao.PlayerDAO;
 import com.mycompany.ludo.model.Game;
 import com.mycompany.ludo.model.Player;
 import com.mycompany.ludo.model.enums.PlayerColor;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
