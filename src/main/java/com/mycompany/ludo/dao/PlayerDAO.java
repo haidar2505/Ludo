@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PlayerDAO {
 
-    private Connection conn;
+    private final Connection conn;
 
     public PlayerDAO(Connection conn) {
         this.conn = conn;

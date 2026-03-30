@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  */
 public class GameDAO {
 
-    private Connection conn;
+    private final Connection conn;
 
     public GameDAO(Connection conn) {
         this.conn = conn;

@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PawnDAO {
 
-    private Connection conn;
+    private final Connection conn;
 
     public PawnDAO(Connection conn) {
         this.conn = conn;
